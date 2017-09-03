@@ -1,6 +1,6 @@
 package types
 
-type Database struct {
+type DatabaseService struct {
 	Service        string           `json:"service"`
 	Tag            string           `json:"tag"`
 	Addr           string           `json:"addr"`

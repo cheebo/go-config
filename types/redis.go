@@ -6,7 +6,9 @@ type RedisService struct {
 	Tag            string           `json:"tag"`
 	Addr           string           `json:"addr"`
 	Port           string           `json:"port"`
-	Pass           string           `json:"password"`
+	Password       string           `json:"password"`
 	Database       int              `json:"database"`
 	PoolSize       int              `json:"pool_size"`
+	MasterName     string           `json:"master_name"`
+	SlaveReadOnly  bool             `json:"slave_read_only"`
 }
