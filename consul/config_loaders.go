@@ -10,6 +10,19 @@ import (
 	"encoding/pem"
 )
 
+func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.AMQPConfig, error) {
+	var cfg types.AMQPConfig
+	str, err := consulutils.GetKV(client, path, opt)
+	if err != nil {
+		return nil, ErrCantGetConfig
+	}
+	err = json.Unmarshal([]byte(str), &cfg)
+	if err != nil {
+		return nil, ErrCantUnmarshalJSON
+	}
+	return &cfg, nil
+}
+
 func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.DatabaseService, error) {
 	var cfg types.DatabaseService
 	str, err := consulutils.GetKV(client, path, opt)
