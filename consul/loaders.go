@@ -102,3 +102,17 @@ func GetRsaPrivateKey(client *api.Client, key string, opt consulutils.QueryOptio
 	}
 	return privateKey
 }
+
+
+func GetSMTPConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.SMTPConfig, error) {
+	var cfg types.SMTPConfig
+	str, err := consulutils.GetKV(client, path, opt)
+	if err != nil {
+		return nil, ErrCantGetConfig
+	}
+	err = json.Unmarshal([]byte(str), &cfg)
+	if err != nil {
+		return nil, ErrCantUnmarshalJSON
+	}
+	return &cfg, nil
+}
