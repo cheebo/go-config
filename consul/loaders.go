@@ -49,7 +49,7 @@ func GetRedisConfig(client *api.Client, path string, opt consulutils.QueryOption
 	return &cfg, nil
 }
 
-func GetOAuthProviderConfig(client *api.Client, path string, opt consulutils.QueryOptions) (types.OAuthProvider, error) {
+func GetOAuthProviderConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.OAuthProvider, error) {
 	var cfg types.OAuthProvider
 	str, err := consulutils.GetKV(client, path, opt)
 	if err != nil {
@@ -59,7 +59,7 @@ func GetOAuthProviderConfig(client *api.Client, path string, opt consulutils.Que
 	if err != nil {
 		return nil, ErrCantUnmarshalJSON
 	}
-	return cfg, nil
+	return &cfg, nil
 }
 
 func GetOAuthProviderListConfig(client *api.Client, path string, opt consulutils.QueryOptions) ([]types.OAuthProvider, error) {
