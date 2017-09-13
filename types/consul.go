@@ -5,7 +5,6 @@ type ConsulTlsConfig struct {
 	CAPath          string  `json:"capath"`
 	CertFile        string  `json:"certfile"`
 	KeyFile         string  `json:"keyfile"`
-
 }
 
 type ConsulConfig struct {
