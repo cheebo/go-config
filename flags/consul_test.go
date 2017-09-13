@@ -12,7 +12,8 @@ func TestDatabaseFlags(t *testing.T) {
 	assert := assert.New(t)
 
 	var (
-		addr = "http://localhost:8501"
+		addr = "localhost:8500"
+		scheme = "http"
 		dc = "dc2"
 		token = "secret"
 		cafile = "/cafile/file"
@@ -23,6 +24,7 @@ func TestDatabaseFlags(t *testing.T) {
 
 	args := []string{
 		"-consul.addr="+addr,
+		"-consul.scheme="+scheme,
 		"-consul.dc="+dc,
 		"-consul.token="+token,
 		"-consul.tls.cafile="+cafile,
@@ -39,6 +41,7 @@ func TestDatabaseFlags(t *testing.T) {
 
 	assert.NoError(err)
 	assert.Equal(addr, cfg.Addr)
+	assert.Equal(scheme, cfg.Scheme)
 	assert.Equal(dc, cfg.Datacenter)
 	assert.Equal(token, cfg.Token)
 	assert.Equal(cafile, cfg.Tls.CAFile)

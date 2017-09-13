@@ -11,6 +11,6 @@ type ConsulConfig struct {
 	Addr            string  `json:"addr"`
 	Datacenter      string  `json:"datacenter"`
 	Token           string  `json:"token"`
-	Schema          string  `json:"schema"`
+	Scheme          string  `json:"scheme"`
 	Tls             ConsulTlsConfig  `json:"tls"`
 }

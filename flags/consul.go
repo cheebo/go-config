@@ -6,7 +6,8 @@ import (
 )
 
 func ConsulFlags(cfg *types.ConsulConfig, f *flag.FlagSet) {
-	f.StringVar(&cfg.Addr, "consul.addr", "http://localhost:8500", "Consul schema and addr, default: http://localhost:8500")
+	f.StringVar(&cfg.Addr, "consul.addr", "localhost:8500", "Consul HTTP addr, default: localhost:8500")
+	f.StringVar(&cfg.Scheme, "consul.scheme", "http", "Consul scheme, default: http")
 	f.StringVar(&cfg.Datacenter, "consul.dc", "dc1", "Consul datacenter, default: dc1")
 	f.StringVar(&cfg.Token, "consul.token", "", "Consul token")
 
