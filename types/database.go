@@ -7,10 +7,10 @@ type DatabaseService struct {
 }
 
 type DatabaseConfig struct {
-	Addr           string  `json:"addr"`
-	Port           string  `json:"port"`
+	Host           string  `json:"addr"`
+	Port           uint    `json:"port"`
 	User           string  `json:"user"`
-	Pass           string  `json:"password"`
+	Password       string  `json:"password"`
 	Database       string  `json:"database"`
 	Driver         string  `json:"driver"`
 }
