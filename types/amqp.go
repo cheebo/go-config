@@ -8,5 +8,5 @@ type AMQPConfig struct {
 	Key             string `json:"key"`
 	Durable         bool   `json:"durable"`
 	AutoDelete      bool   `json:"auto_delete"`
-	DeliveryMode    uint8  `json:"delivery_mode"`
+	DeliveryMode    uint   `json:"delivery_mode"`
 }
