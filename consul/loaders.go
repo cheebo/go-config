@@ -23,7 +23,7 @@ func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions
 	return &cfg, nil
 }
 
-func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.DatabaseService, error) {
+func GetDatabaseService(client *api.Client, path string, opt consulutils.QueryOptions) (*types.DatabaseService, error) {
 	var cfg types.DatabaseService
 	str, err := consulutils.GetKV(client, path, opt)
 	if err != nil {
@@ -36,8 +36,34 @@ func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOpt
 	return &cfg, nil
 }
 
-func GetRedisConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.RedisService, error) {
+func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.DatabaseConfig, error) {
+	var cfg types.DatabaseConfig
+	str, err := consulutils.GetKV(client, path, opt)
+	if err != nil {
+		return nil, ErrCantGetConfig
+	}
+	err = json.Unmarshal([]byte(str), &cfg)
+	if err != nil {
+		return nil, ErrCantUnmarshalJSON
+	}
+	return &cfg, nil
+}
+
+func GetRedisService(client *api.Client, path string, opt consulutils.QueryOptions) (*types.RedisService, error) {
 	var cfg types.RedisService
+	str, err := consulutils.GetKV(client, path, opt)
+	if err != nil {
+		return nil, ErrCantGetConfig
+	}
+	err = json.Unmarshal([]byte(str), &cfg)
+	if err != nil {
+		return nil, ErrCantUnmarshalJSON
+	}
+	return &cfg, nil
+}
+
+func GetRedisConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.RedisConfig, error) {
+	var cfg types.RedisConfig
 	str, err := consulutils.GetKV(client, path, opt)
 	if err != nil {
 		return nil, ErrCantGetConfig
