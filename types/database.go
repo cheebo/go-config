@@ -7,7 +7,7 @@ type DatabaseService struct {
 }
 
 type DatabaseConfig struct {
-	Host           string  `json:"addr"`
+	Host           string  `json:"host"`
 	Port           uint    `json:"port"`
 	User           string  `json:"user"`
 	Password       string  `json:"password"`
