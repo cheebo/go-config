@@ -8,6 +8,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 )
 
 func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.AMQPConfig, error) {
@@ -18,7 +19,7 @@ func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("AMQP: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -31,7 +32,7 @@ func GetDatabaseService(client *api.Client, path string, opt consulutils.QueryOp
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("Database Service: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -44,7 +45,7 @@ func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOpt
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("Database Config: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -57,7 +58,7 @@ func GetRedisService(client *api.Client, path string, opt consulutils.QueryOptio
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("Redis Service: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -70,7 +71,7 @@ func GetRedisConfig(client *api.Client, path string, opt consulutils.QueryOption
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("Redis Config: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -83,7 +84,7 @@ func GetOAuthProviderConfig(client *api.Client, path string, opt consulutils.Que
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("OAuthProvider: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
@@ -96,7 +97,7 @@ func GetOAuthProviderListConfig(client *api.Client, path string, opt consulutils
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("OAuthProviers List: " + ErrCantUnmarshalJSON.Error())
 	}
 	return cfg, nil
 }
