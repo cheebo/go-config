@@ -151,7 +151,7 @@ func GetSMTPConfig(client *api.Client, path string, opt consulutils.QueryOptions
 	}
 	err = json.Unmarshal([]byte(str), &cfg)
 	if err != nil {
-		return nil, ErrCantUnmarshalJSON
+		return nil, errors.New("SMTP: " + ErrCantUnmarshalJSON.Error())
 	}
 	return &cfg, nil
 }
