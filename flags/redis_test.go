@@ -12,8 +12,7 @@ func TestDatabaseFlags(t *testing.T) {
 	assert := assert.New(t)
 
 	var (
-		rHost = "localhost"
-		rPort = uint(6379)
+		rAddr = "localhost:6952"
 		rPassword = "password"
 		rDatabase = uint(0)
 		rPoolSize = uint(10)
@@ -22,8 +21,7 @@ func TestDatabaseFlags(t *testing.T) {
 	)
 
 	args := []string{
-		"-redis.host="+rHost,
-		"-redis.port=6379",
+		"-redis.addr="+rAddr,
 		"-redis.password="+rPassword,
 		"-redis.database=0",
 		"-redis.poolsize=10",
@@ -38,8 +36,7 @@ func TestDatabaseFlags(t *testing.T) {
 	err := f.Parse(args)
 
 	assert.NoError(err)
-	assert.Equal(rHost, cfg.Host)
-	assert.Equal(rPort, cfg.Port)
+	assert.Equal(rAddr, cfg.Addr)
 	assert.Equal(rPassword, cfg.Password)
 	assert.Equal(rDatabase, cfg.Database)
 	assert.Equal(rPoolSize, cfg.PoolSize)

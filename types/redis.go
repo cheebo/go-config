@@ -9,11 +9,10 @@ type RedisService struct {
 
 
 type RedisConfig struct {
-	Host           string  `json:"host"`
-	Port           uint    `json:"port"`
-	Password       string  `json:"password"`
-	Database       uint    `json:"database"`
-	PoolSize       uint    `json:"pool_size"`
-	MasterName     string  `json:"master_name"`
-	SlaveReadOnly  bool    `json:"slave_read_only"`
+	Addr           string    `json:"addr"`
+	Password       string    `json:"password"`
+	Database       uint      `json:"database"`
+	PoolSize       uint      `json:"pool_size"`
+	MasterName     string    `json:"master_name"`
+	SlaveReadOnly  bool      `json:"slave_read_only"`
 }

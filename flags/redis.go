@@ -6,8 +6,7 @@ import (
 )
 
 func RedisFlags(cfg *types.RedisConfig, f *flag.FlagSet) {
-	f.StringVar(&cfg.Host, "redis.host", cfg.Host, "redis host: 'localhost' or '127.0.0.1'")
-	f.UintVar(&cfg.Port, "redis.port", cfg.Port, "port number")
+	f.StringVar(&cfg.Addr, "redis.addr", cfg.Addr, "redis addr")
 	f.StringVar(&cfg.Password, "redis.password", cfg.Password, "password")
 	f.UintVar(&cfg.Database, "redis.database", cfg.Database, "port number")
 	f.UintVar(&cfg.PoolSize, "redis.poolsize", cfg.PoolSize, "size of the connection pool, default 10")
