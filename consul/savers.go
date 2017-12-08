@@ -11,7 +11,7 @@ func SetConfig(client *api.Client, path string, opt consul_utils.QueryOptions, c
 	var err error
 	cfg, ok := config.(string)
 	if !ok {
-		cfgBytes, err := json.Marshal(config)
+		cfgBytes, err := json.MarshalIndent(config, "", "\t")
 		if err != nil {
 			return ErrCantMarshalJSON
 		}
