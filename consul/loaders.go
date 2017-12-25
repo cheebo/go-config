@@ -1,14 +1,15 @@
 package consul
 
 import (
-	"encoding/json"
-	"github.com/hashicorp/consul/api"
-	consulutils "github.com/cheebo/consul-utils"
-	"github.com/cheebo/go-config/types"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/json"
 	"encoding/pem"
 	"errors"
+
+	consulutils "github.com/cheebo/consul-utils"
+	"github.com/cheebo/go-config/types"
+	"github.com/hashicorp/consul/api"
 )
 
 func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions) (*types.AMQPConfig, error) {
