@@ -18,9 +18,11 @@ func GetAMQPConfig(client *api.Client, path string, opt consulutils.QueryOptions
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("AMQP: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("AMQP: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -31,9 +33,11 @@ func GetDatabaseService(client *api.Client, path string, opt consulutils.QueryOp
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("Database Service: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("Database Service: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -44,9 +48,11 @@ func GetDatabaseConfig(client *api.Client, path string, opt consulutils.QueryOpt
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("Database Config: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("Database Config: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -57,9 +63,11 @@ func GetRedisService(client *api.Client, path string, opt consulutils.QueryOptio
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("Redis Service: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("Redis Service: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -70,9 +78,11 @@ func GetRedisConfig(client *api.Client, path string, opt consulutils.QueryOption
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("Redis Config: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("Redis Config: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -83,9 +93,11 @@ func GetOAuthProviderConfig(client *api.Client, path string, opt consulutils.Que
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("OAuthProvider: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("OAuthProvider: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
@@ -96,9 +108,11 @@ func GetOAuthProviderListConfig(client *api.Client, path string, opt consulutils
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("OAuthProviers List: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("OAuthProviers List: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return cfg, nil
 }
@@ -150,9 +164,11 @@ func GetSMTPConfig(client *api.Client, path string, opt consulutils.QueryOptions
 	if err != nil {
 		return nil, ErrCantGetConfig
 	}
-	err = json.Unmarshal([]byte(str), &cfg)
-	if err != nil {
-		return nil, errors.New("SMTP: " + ErrCantUnmarshalJSON.Error())
+	if len(str) > 0 {
+		err = json.Unmarshal([]byte(str), &cfg)
+		if err != nil {
+			return nil, errors.New("SMTP: " + ErrCantUnmarshalJSON.Error())
+		}
 	}
 	return &cfg, nil
 }
