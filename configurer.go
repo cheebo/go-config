@@ -14,11 +14,12 @@ var (
 type Config interface {
 	Use(sources ...Source)
 	Configure(v interface{}) error
+	Usage() map[string]string
 }
 
 // Source: implement this interface to get configurations from sources like env, flag, file, kv-store etc
 type Source interface {
-	Init(map[string]*Variable) error
+	Init(variables map[string]*Variable) error
 	Int(name string) (int, error)
 	Float(name string) (float64, error)
 	UInt(name string) (uint, error)
@@ -44,6 +45,14 @@ func New() Config {
 
 func (self *config) Use(sources ...Source) {
 	self.sources = append(self.sources, sources...)
+}
+
+func (self *config) Usage() map[string]string {
+	usage := make(map[string]string)
+	for k, v := range self.variables {
+		usage[k] = v.Description
+	}
+	return usage
 }
 
 func (self *config) Configure(v interface{}) error {
@@ -106,15 +115,26 @@ func (self *config) setup(v interface{}, parent string) error {
 
 		if refField.Kind() == reflect.Struct {
 			self.setup(refField.Addr().Interface(), name)
+			self.variables[name] = &Variable{
+				Name:        name,
+				Description: field.Tag.Get("description"),
+				Tag:         field.Tag,
+				Type:        refField.Type(),
+			}
 			continue
 		}
 
-		z := reflect.Zero(refField.Type())
+		if !refField.CanSet() {
+			continue
+		}
+
 		self.variables[name] = &Variable{
 			Name:        name,
 			Description: field.Tag.Get("description"),
-			Def:         z,
-			Field:       &refField,
+			Def:         reflect.Zero(refField.Type()),
+			Set:         refField.Set,
+			Tag:         field.Tag,
+			Type:        refField.Type(),
 		}
 
 	}
@@ -127,13 +147,13 @@ func (self *config) fillData() error {
 
 		for _, src := range self.sources {
 
-			switch val.Field.Kind() {
+			switch val.Type.Kind() {
 			case reflect.Int:
 				s, err := src.Int(val.Name)
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Field.Type()).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
 
@@ -144,7 +164,7 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Field.Type()).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
 
@@ -155,7 +175,7 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Field.Type()).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
 
@@ -166,7 +186,7 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Field.Type()).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
 
@@ -177,14 +197,13 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Field.Type()).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
 
 				val.set(s)
 			}
 
-			println("--")
 			changed = true
 		}
 		if !changed {
@@ -204,21 +223,18 @@ type Variable struct {
 	Name        string
 	Def         reflect.Value
 	Description string
-	Value       interface{}
-	Field       *reflect.Value
+	Set         func(x reflect.Value)
+	Tag         reflect.StructTag
+	Type        reflect.Type
 }
 
 func (v Variable) String() string {
-	return fmt.Sprintf("%v[%v] %v", v.Name, v.Field.Kind(), v.Description)
+	return fmt.Sprintf("%v[%v] %v", v.Name, v.Type.Kind(), v.Description)
 }
 
 func (v *Variable) set(value interface{}) {
-	if v.Field == nil {
+	if v.Type.Kind() == reflect.Struct {
 		return
 	}
-	val := reflect.ValueOf(value)
-	if !v.Field.CanSet() {
-		return
-	}
-	v.Field.Set(val.Convert(v.Field.Type()))
+	v.Set(reflect.ValueOf(value).Convert(v.Type))
 }

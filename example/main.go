@@ -6,11 +6,15 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+type Master struct {
+	AMQP types.AMQPConfig `consul:"amqp"`
+}
+
 type Config struct {
-	Redis *types.RedisConfig
+	Master Master
 
 	Name string `description:"user's name'"`
-	Pass string `description:"user's password'"`
+	Pass string `cfg:"password" description:"user's password'"`
 
 	GasPeerTx float64
 
@@ -24,7 +28,9 @@ func main() {
 	c := Config{}
 	cfgr := cfg.New()
 	cfgr.Use(cfg.EnvironmentSource())
+	cfgr.Use(cfg.ConsulSource())
 	cfgr.Use(cfg.FlagSource())
 	cfgr.Configure(&c)
+
 	spew.Dump(c)
 }
