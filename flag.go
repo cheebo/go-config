@@ -52,7 +52,13 @@ func (self flags) Init(vals map[string]*Variable) error {
 			self.values[name] = self.fs.Bool(name, val.Def.Interface().(bool), val.Description)
 		}
 	}
-	return self.fs.Parse(os.Args[1:])
+	var args []string
+	for _, f := range os.Args[:] {
+		if f[0] == '-' {
+			args = append(args, f)
+		}
+	}
+	return self.fs.Parse(args)
 }
 
 func (self flags) Int(name string) (int, error) {
