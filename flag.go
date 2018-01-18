@@ -20,13 +20,10 @@ func FlagSource() Source {
 	}
 }
 
-var str *string
-
 func (self flags) Init(vals map[string]*Variable) error {
 	for name, val := range vals {
 		name = self.name(name)
-
-		switch val.Field.Kind() {
+		switch val.Type.Kind() {
 		case reflect.String:
 			self.values[name] = self.fs.String(name, val.Def.Interface().(string), val.Description)
 
@@ -55,7 +52,13 @@ func (self flags) Init(vals map[string]*Variable) error {
 			self.values[name] = self.fs.Bool(name, val.Def.Interface().(bool), val.Description)
 		}
 	}
-	return self.fs.Parse(os.Args[1:])
+	var args []string
+	for _, f := range os.Args[:] {
+		if f[0] == '-' {
+			args = append(args, f)
+		}
+	}
+	return self.fs.Parse(args)
 }
 
 func (self flags) Int(name string) (int, error) {

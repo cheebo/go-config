@@ -10,7 +10,7 @@ type Config struct {
 	Redis *types.RedisConfig
 
 	Name  string `description:"user's name'"`
-	Pass  string `description:"user's password'"`
+	Pass  string `cfg:"password" description:"user's password'"`
 
 	GasPeerTx           float64
 
@@ -30,3 +30,7 @@ func main() {
 	cfgr.Configure(&c)
 }
 ```
+
+Tags:
+- cfg:{param_name}
+- description:{variable description}
