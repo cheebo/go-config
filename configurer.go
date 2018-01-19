@@ -131,31 +131,32 @@ func (self *config) setup(v interface{}, parent string) error {
 
 		tagDefault := parseDefault(field.Tag.Get("default"))
 		defVal := reflect.Zero(refField.Type())
-		switch refField.Kind() {
-		case reflect.Int:
-			i, err := strconv.ParseInt(tagDefault, 10, 64)
-			if err == nil {
-				defVal = reflect.ValueOf(i)
+		if len(tagDefault) > 0 {
+			switch refField.Kind() {
+			case reflect.Int:
+				i, err := strconv.ParseInt(tagDefault, 10, 64)
+				if err == nil {
+					defVal = reflect.ValueOf(i)
+				}
+			case reflect.Uint:
+				ui, err := strconv.ParseUint(tagDefault, 10, 64)
+				if err == nil {
+					defVal = reflect.ValueOf(ui)
+				}
+			case reflect.Float64:
+				f, err := strconv.ParseFloat(tagDefault, 64)
+				if err == nil {
+					defVal = reflect.ValueOf(f)
+				}
+			case reflect.Bool:
+				b, err := strconv.ParseBool(tagDefault)
+				if err == nil {
+					defVal = reflect.ValueOf(b)
+				}
+			case reflect.String:
+				defVal = reflect.ValueOf(tagDefault)
 			}
-		case reflect.Uint:
-			ui, err := strconv.ParseUint(tagDefault, 10, 64)
-			if err == nil {
-				defVal = reflect.ValueOf(ui)
-			}
-		case reflect.Float64:
-			f, err := strconv.ParseFloat(tagDefault, 64)
-			if err == nil {
-				defVal = reflect.ValueOf(f)
-			}
-		case reflect.Bool:
-			b, err := strconv.ParseBool(tagDefault)
-			if err == nil {
-				defVal = reflect.ValueOf(b)
-			}
-		case reflect.String:
-			defVal = reflect.ValueOf(tagDefault)
 		}
-
 		self.variables[name] = &Variable{
 			Name:        name,
 			Description: field.Tag.Get("description"),
