@@ -16,12 +16,12 @@ type Config struct {
 	Name string `description:"user's name'"`
 	Pass string `cfg:"password" description:"user's password'"`
 
-	GasPeerTx float64
+	GasPeerTx float64 `default:"10.11"`
 
-	Timeout        uint
+	Timeout        uint `default:"101"`
 	PricePerAction int
 
-	AllowRegistration bool
+	AllowRegistration bool `default:"true"`
 }
 
 func main() {

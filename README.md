@@ -1,6 +1,6 @@
 # Go Config
 
-Package provdes routines that loads configuration into provided structure from provided sources.
+Package provides routines that loads configuration into provided structure from provided sources.
 
 
 Example
@@ -31,6 +31,11 @@ func main() {
 }
 ```
 
-Tags:
-- cfg:{param_name}
-- description:{variable description}
+Supported field tags:
+- cfg:"param_name"
+- description:"variable description"
+- default:"default_value"
+
+Supported sources:
+- env variables
+- flags

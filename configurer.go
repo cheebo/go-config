@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -128,10 +129,37 @@ func (self *config) setup(v interface{}, parent string) error {
 			continue
 		}
 
+		tagDefault := parseDefault(field.Tag.Get("default"))
+		defVal := reflect.Zero(refField.Type())
+		switch refField.Kind() {
+		case reflect.Int:
+			i, err := strconv.ParseInt(tagDefault, 10, 64)
+			if err == nil {
+				defVal = reflect.ValueOf(i)
+			}
+		case reflect.Uint:
+			ui, err := strconv.ParseUint(tagDefault, 10, 64)
+			if err == nil {
+				defVal = reflect.ValueOf(ui)
+			}
+		case reflect.Float64:
+			f, err := strconv.ParseFloat(tagDefault, 64)
+			if err == nil {
+				defVal = reflect.ValueOf(f)
+			}
+		case reflect.Bool:
+			b, err := strconv.ParseBool(tagDefault)
+			if err == nil {
+				defVal = reflect.ValueOf(b)
+			}
+		case reflect.String:
+			defVal = reflect.ValueOf(tagDefault)
+		}
+
 		self.variables[name] = &Variable{
 			Name:        name,
 			Description: field.Tag.Get("description"),
-			Def:         reflect.Zero(refField.Type()),
+			Def:         defVal,
 			Set:         refField.Set,
 			Tag:         field.Tag,
 			Type:        refField.Type(),
@@ -216,6 +244,11 @@ func (self *config) fillData() error {
 func parseTag(tag string) (string, []string) {
 	opts := strings.Split(tag, ",")
 	return opts[0], opts[1:]
+}
+
+func parseDefault(tag string) string {
+	opts := strings.Split(tag, ",")
+	return opts[0]
 }
 
 // Variable Routines
