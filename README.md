@@ -35,7 +35,9 @@ Supported field tags:
 - cfg:"param_name"
 - description:"variable description"
 - default:"default_value"
+- consul:"/kv/path/to/json/config"
 
 Supported sources:
 - env variables
 - flags
+- consul (you can define relative path in structure's tag and basepath in consul source creation)
