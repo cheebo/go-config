@@ -27,6 +27,10 @@ func main() {
 	cfgr.Use(configurer.EnvironmentSource())
 	// parse flags
 	cfgr.Use(configurer.FlagSource())
+	// parse json file
+	cfgr.Use(configurer.JsonFileSource("./config/configurations.json"))
+	// parse consul KV values
+	cfgr.Use(configurer.ConsulSource("/project/name"))
 	cfgr.Configure(&c)
 }
 ```
@@ -40,4 +44,5 @@ Supported field tags:
 Supported sources:
 - env variables
 - flags
+- json file
 - consul (you can define relative path in structure's tag and basepath in consul source creation)
