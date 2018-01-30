@@ -3,6 +3,7 @@ package go_config
 import (
 	"github.com/cheebo/go-config/utils"
 	"io/ioutil"
+	"reflect"
 	"strings"
 )
 
@@ -89,6 +90,10 @@ func (self *jsonFIle) Bool(name string) (bool, error) {
 		return val.(bool), nil
 	}
 	return false, nil
+}
+
+func (self *jsonFIle) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+	return []interface{}{}, nil
 }
 
 func (self *jsonFIle) name(name string) string {

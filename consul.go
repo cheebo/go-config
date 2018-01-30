@@ -5,6 +5,7 @@ import (
 	"github.com/cheebo/go-config/types"
 	"github.com/cheebo/go-config/utils"
 	"github.com/hashicorp/consul/api"
+	"reflect"
 	"strings"
 )
 
@@ -101,6 +102,10 @@ func (self *consul) Bool(name string) (bool, error) {
 		return false, nil
 	}
 	return b, nil
+}
+
+func (self *consul) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+	return []interface{}{}, nil
 }
 
 func (self *consul) name(name string) string {

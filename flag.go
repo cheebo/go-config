@@ -20,12 +20,16 @@ func FlagSource() Source {
 	}
 }
 
-func (self flags) Init(vals map[string]*Variable) error {
+func (self *flags) Init(vals map[string]*Variable) error {
 	for name, val := range vals {
 		name = self.name(name)
 		switch val.Type.Kind() {
 		case reflect.String:
 			self.values[name] = self.fs.String(name, val.Def.Interface().(string), val.Description)
+
+		case reflect.Slice:
+			defVal := ""
+			self.values[name] = self.fs.String(name, defVal, val.Description)
 
 		case reflect.Int:
 			i, ok := val.Def.Interface().(int)
@@ -61,7 +65,7 @@ func (self flags) Init(vals map[string]*Variable) error {
 	return self.fs.Parse(args)
 }
 
-func (self flags) Int(name string) (int, error) {
+func (self *flags) Int(name string) (int, error) {
 	val, ok := self.values[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -70,7 +74,7 @@ func (self flags) Int(name string) (int, error) {
 	return *i, nil
 }
 
-func (self flags) Float(name string) (float64, error) {
+func (self *flags) Float(name string) (float64, error) {
 	val, ok := self.values[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -79,7 +83,7 @@ func (self flags) Float(name string) (float64, error) {
 	return float64(*val.(*float64)), nil
 }
 
-func (self flags) UInt(name string) (uint, error) {
+func (self *flags) UInt(name string) (uint, error) {
 	val, ok := self.values[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -87,7 +91,7 @@ func (self flags) UInt(name string) (uint, error) {
 	return uint(*val.(*uint)), nil
 }
 
-func (self flags) String(name string) (string, error) {
+func (self *flags) String(name string) (string, error) {
 	val, ok := self.values[self.name(name)]
 	if !ok {
 		return "", nil
@@ -95,7 +99,7 @@ func (self flags) String(name string) (string, error) {
 	return *(val.(*string)), nil
 }
 
-func (self flags) Bool(name string) (bool, error) {
+func (self *flags) Bool(name string) (bool, error) {
 	val, ok := self.values[self.name(name)]
 	if !ok {
 		return false, nil
@@ -107,6 +111,17 @@ func (self flags) Bool(name string) (bool, error) {
 	return *b, nil
 }
 
-func (self flags) name(name string) string {
+func (self *flags) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+	val, ok := self.values[self.name(name)]
+	if !ok {
+		return []interface{}{}, nil
+	}
+
+	src := *(val.(*string))
+
+	return parseSlice(src, delimiter, kind)
+}
+
+func (self *flags) name(name string) string {
 	return strings.ToLower(name)
 }

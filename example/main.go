@@ -22,13 +22,18 @@ type Config struct {
 	PricePerAction int
 
 	AllowRegistration bool `default:"true"`
+
+	Ips []string
 }
 
 func main() {
 	c := Config{}
 	cfgr := cfg.New()
-	cfgr.Use(cfg.EnvironmentSource())
-	cfgr.Use(cfg.ConsulSource())
+	//cfgr.Use(cfg.EnvironmentSource())
+	//cfgr.Use(cfg.ConsulSource("/example/config", types.ConsulConfig{
+	//	Addr:   "localhost:8500",
+	//	Scheme: "http",
+	//}))
 	cfgr.Use(cfg.FlagSource())
 	cfgr.Configure(&c)
 

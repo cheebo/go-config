@@ -2,6 +2,7 @@ package go_config
 
 import (
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -44,6 +45,11 @@ func (self env) String(name string) (string, error) {
 func (self env) Bool(name string) (bool, error) {
 	val := os.Getenv(self.name(name))
 	return strconv.ParseBool(val)
+}
+
+func (self env) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+	src := os.Getenv(self.name(name))
+	return parseSlice(src, delimiter, kind)
 }
 
 func (self env) name(name string) string {
