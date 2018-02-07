@@ -229,9 +229,6 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
-					continue
-				}
 
 				val.set(s)
 
