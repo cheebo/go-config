@@ -23,14 +23,19 @@ type Config struct {
 func main() {
 	c := Config{}
 	cfgr := configurer.New()
+	
 	// parse env variables
-	cfgr.Use(configurer.EnvironmentSource())
+	cfgr.Use(env.Source())
+	
 	// parse flags
-	cfgr.Use(configurer.FlagSource())
+	cfgr.Use(flag.Source())
+	
 	// parse json file
-	cfgr.Use(configurer.JsonFileSource("./config/configurations.json"))
+	cfgr.Use(json.FileSource("./config/configurations.json"))
+	
 	// parse consul KV values
-	cfgr.Use(configurer.ConsulSource("/project/name"))
+	cfgr.Use(consul.Source("/project/name"))
+	
 	cfgr.Configure(&c)
 }
 ```
