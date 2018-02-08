@@ -1,6 +1,8 @@
-package go_config
+package env
 
 import (
+	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/utils"
 	"os"
 	"reflect"
 	"strconv"
@@ -9,11 +11,11 @@ import (
 
 type env struct{}
 
-func EnvironmentSource() Source {
+func Source() go_config.Source {
 	return env{}
 }
 
-func (self env) Init(vals map[string]*Variable) error {
+func (self env) Init(vals map[string]*go_config.Variable) error {
 	return nil
 }
 
@@ -49,7 +51,7 @@ func (self env) Bool(name string) (bool, error) {
 
 func (self env) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
 	src := os.Getenv(self.name(name))
-	return parseSlice(src, delimiter, kind)
+	return utils.ParseSlice(src, delimiter, kind)
 }
 
 func (self env) name(name string) string {

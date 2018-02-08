@@ -1,10 +1,12 @@
-package go_config
+package flag
 
 import (
 	"flag"
 	"os"
 	"strings"
 
+	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/utils"
 	"reflect"
 )
 
@@ -13,14 +15,14 @@ type flags struct {
 	values map[string]interface{}
 }
 
-func FlagSource() Source {
+func Source() go_config.Source {
 	return &flags{
 		fs:     flag.NewFlagSet("", flag.ContinueOnError),
 		values: make(map[string]interface{}),
 	}
 }
 
-func (self *flags) Init(vals map[string]*Variable) error {
+func (self *flags) Init(vals map[string]*go_config.Variable) error {
 	for name, val := range vals {
 		name = self.name(name)
 		switch val.Type.Kind() {
@@ -119,7 +121,7 @@ func (self *flags) Slice(name, delimiter string, kind reflect.Kind) ([]interface
 
 	src := *(val.(*string))
 
-	return parseSlice(src, delimiter, kind)
+	return utils.ParseSlice(src, delimiter, kind)
 }
 
 func (self *flags) name(name string) string {

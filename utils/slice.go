@@ -1,4 +1,4 @@
-package go_config
+package utils
 
 import (
 	"reflect"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func parseSlice(src, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+func ParseSlice(src, delimiter string, kind reflect.Kind) ([]interface{}, error) {
 	if len(src) == 0 {
 		return []interface{}{}, nil
 	}

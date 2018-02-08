@@ -1,7 +1,8 @@
-package go_config
+package consul
 
 import (
 	"github.com/cheebo/consul-utils"
+	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/types"
 	"github.com/cheebo/go-config/utils"
 	"github.com/hashicorp/consul/api"
@@ -16,7 +17,7 @@ type consul struct {
 	consul map[string]interface{}
 }
 
-func ConsulSource(prefix string, config types.ConsulConfig) Source {
+func Source(prefix string, config types.ConsulConfig) go_config.Source {
 	return &consul{
 		prefix: prefix,
 		config: config,
@@ -25,7 +26,7 @@ func ConsulSource(prefix string, config types.ConsulConfig) Source {
 	}
 }
 
-func (self *consul) Init(vals map[string]*Variable) error {
+func (self *consul) Init(vals map[string]*go_config.Variable) error {
 	config := &api.Config{Address: self.config.Addr, Scheme: self.config.Scheme, Token: self.config.Token}
 	client, err := api.NewClient(config)
 	if err != nil {
@@ -47,12 +48,19 @@ func (self *consul) Init(vals map[string]*Variable) error {
 				return err
 			}
 
-			m, err := utils.JsonParse([]byte(cc))
-			if err != nil {
-				return err
-			}
-			for n, v := range m {
-				self.values[name+"."+n] = v
+			switch val.Type.Kind() {
+			case reflect.Struct:
+				fallthrough
+			case reflect.Slice:
+				m, err := utils.JsonParse([]byte(cc))
+				if err != nil {
+					return err
+				}
+				for n, v := range m {
+					self.values[name+"."+n] = v
+				}
+			default:
+				self.values[name] = cc
 			}
 		}
 	}

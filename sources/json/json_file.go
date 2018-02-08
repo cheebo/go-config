@@ -1,6 +1,7 @@
-package go_config
+package json
 
 import (
+	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/utils"
 	"io/ioutil"
 	"reflect"
@@ -12,14 +13,14 @@ type jsonFIle struct {
 	data map[string]interface{}
 }
 
-func JsonFileSource(path string) Source {
+func FileSource(path string) go_config.Source {
 	return &jsonFIle{
 		path: path,
 		data: map[string]interface{}{},
 	}
 }
 
-func (self *jsonFIle) Init(vals map[string]*Variable) error {
+func (self *jsonFIle) Init(vals map[string]*go_config.Variable) error {
 	data, err := ioutil.ReadFile(self.path)
 	if err != nil {
 		return err
