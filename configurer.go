@@ -52,7 +52,10 @@ func (self *config) Use(sources ...Source) {
 func (self *config) Usage() map[string]string {
 	usage := make(map[string]string)
 	for k, v := range self.variables {
-		usage[k] = v.Description
+		if v.Description == "-" {
+			continue
+		}
+		usage[strings.ToLower(k)] = v.Description
 	}
 	return usage
 }
