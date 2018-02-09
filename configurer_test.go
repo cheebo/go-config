@@ -2,6 +2,8 @@ package go_config_test
 
 import (
 	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/sources/env"
+	"github.com/cheebo/go-config/sources/flag"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -18,8 +20,8 @@ func TestConfig_Configure(t *testing.T) {
 	var config SliceConfig
 
 	cfg := go_config.New()
-	cfg.Use(go_config.EnvironmentSource())
-	cfg.Use(go_config.FlagSource())
+	cfg.Use(env.Source())
+	cfg.Use(flag.Source())
 	err := cfg.Configure(&config)
 
 	assert.NoError(err)

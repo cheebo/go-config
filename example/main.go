@@ -9,7 +9,7 @@ import (
 )
 
 type Master struct {
-	AMQP types.AMQPConfig `consul:"amqp"`
+	AMQP *types.AMQPConfig `consul:"amqp"`
 }
 
 type Config struct {
