@@ -8,9 +8,9 @@ type ConsulTlsConfig struct {
 }
 
 type ConsulConfig struct {
-	Addr       string          `json:"addr"`
-	Datacenter string          `json:"dc"`
+	Addr       string          `json:"addr" default:"localhost:8500"`
+	Datacenter string          `json:"dc" default:"dc1"`
 	Token      string          `json:"token"`
-	Scheme     string          `json:"scheme"`
+	Scheme     string          `json:"scheme" default:"http"`
 	Tls        ConsulTlsConfig `json:"tls"`
 }

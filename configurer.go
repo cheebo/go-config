@@ -2,7 +2,6 @@ package go_config
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -16,17 +15,6 @@ type Config interface {
 	Use(sources ...Source)
 	Configure(v interface{}) error
 	Usage() map[string]string
-}
-
-// Source: implement this interface to get configurations from sources like env, flag, file, kv-store etc
-type Source interface {
-	Init(variables map[string]*Variable) error
-	Int(name string) (int, error)
-	Float(name string) (float64, error)
-	UInt(name string) (uint, error)
-	String(name string) (string, error)
-	Bool(name string) (bool, error)
-	Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error)
 }
 
 type config struct {
@@ -134,12 +122,14 @@ func (self *config) setup(v interface{}, parent string) error {
 		if len(tagDefault) > 0 {
 			switch refField.Kind() {
 			case reflect.Int:
-				i, err := strconv.ParseInt(tagDefault, 10, 64)
+				i64, err := strconv.ParseInt(tagDefault, 10, 64)
+				i := int(i64)
 				if err == nil {
 					defVal = reflect.ValueOf(i)
 				}
 			case reflect.Uint:
-				ui, err := strconv.ParseUint(tagDefault, 10, 64)
+				ui64, err := strconv.ParseUint(tagDefault, 10, 64)
+				ui := uint(ui64)
 				if err == nil {
 					defVal = reflect.ValueOf(ui)
 				}
@@ -187,6 +177,9 @@ func (self *config) fillData() error {
 				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
+				if s == val.Def.Interface().(int) {
+					continue
+				}
 
 				val.set(s)
 
@@ -196,6 +189,9 @@ func (self *config) fillData() error {
 					continue
 				}
 				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+					continue
+				}
+				if s == val.Def.Interface().(uint) {
 					continue
 				}
 
@@ -209,6 +205,9 @@ func (self *config) fillData() error {
 				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
 					continue
 				}
+				if s == val.Def.Interface().(float64) {
+					continue
+				}
 
 				val.set(s)
 
@@ -217,7 +216,7 @@ func (self *config) fillData() error {
 				if err != nil {
 					continue
 				}
-				if reflect.Zero(val.Type).Interface() == reflect.ValueOf(&s).Elem().Interface() {
+				if s == "" || s == val.Def.Interface().(string) {
 					continue
 				}
 
@@ -226,6 +225,9 @@ func (self *config) fillData() error {
 			case reflect.Bool:
 				s, err := src.Bool(val.Name)
 				if err != nil {
+					continue
+				}
+				if s == val.Def.Interface().(bool) {
 					continue
 				}
 

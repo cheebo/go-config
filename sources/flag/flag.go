@@ -124,6 +124,11 @@ func (self *flags) Slice(name, delimiter string, kind reflect.Kind) ([]interface
 	return utils.ParseSlice(src, delimiter, kind)
 }
 
+func (self *flags) Export(opt ...go_config.SourceOpt) ([]byte, error) {
+
+	return []byte{}, nil
+}
+
 func (self *flags) name(name string) string {
 	return strings.ToLower(name)
 }

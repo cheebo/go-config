@@ -31,7 +31,8 @@ type Config struct {
 func main() {
 	c := Config{}
 	cfgr := cfg.New()
-	cfgr.Use(env.Source())
+	eSrc := env.Source()
+	cfgr.Use(eSrc)
 	cfgr.Use(flag.Source())
 	//cfgr.Use(cfg.ConsulSource("/example/config", types.ConsulConfig{
 	//	Addr:   "localhost:8500",
@@ -39,6 +40,7 @@ func main() {
 	//}))
 	cfgr.Configure(&c)
 
-	spew.Dump(c)
-	spew.Dump(cfgr.Usage())
+	//spew.Dump(c)
+	//spew.Dump(cfgr.Usage())
+	spew.Dump(eSrc.Export())
 }

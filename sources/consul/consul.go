@@ -13,20 +13,23 @@ import (
 type consul struct {
 	prefix string
 	config types.ConsulConfig
-	values map[string]interface{}
+	data   map[string]interface{}
 	consul map[string]interface{}
+	values map[string]*go_config.Variable
 }
 
 func Source(prefix string, config types.ConsulConfig) go_config.Source {
 	return &consul{
 		prefix: prefix,
 		config: config,
-		values: make(map[string]interface{}),
+		data:   make(map[string]interface{}),
 		consul: make(map[string]interface{}),
 	}
 }
 
 func (self *consul) Init(vals map[string]*go_config.Variable) error {
+	self.values = vals
+
 	config := &api.Config{Address: self.config.Addr, Scheme: self.config.Scheme, Token: self.config.Token}
 	client, err := api.NewClient(config)
 	if err != nil {
@@ -57,10 +60,10 @@ func (self *consul) Init(vals map[string]*go_config.Variable) error {
 					return err
 				}
 				for n, v := range m {
-					self.values[name+"."+n] = v
+					self.data[name+"."+n] = v
 				}
 			default:
-				self.values[name] = cc
+				self.data[name] = cc
 			}
 		}
 	}
@@ -68,7 +71,7 @@ func (self *consul) Init(vals map[string]*go_config.Variable) error {
 }
 
 func (self *consul) Int(name string) (int, error) {
-	val, ok := self.values[self.name(name)]
+	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
 	}
@@ -76,7 +79,7 @@ func (self *consul) Int(name string) (int, error) {
 }
 
 func (self *consul) Float(name string) (float64, error) {
-	val, ok := self.values[self.name(name)]
+	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
 	}
@@ -85,7 +88,7 @@ func (self *consul) Float(name string) (float64, error) {
 }
 
 func (self *consul) UInt(name string) (uint, error) {
-	val, ok := self.values[self.name(name)]
+	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
 	}
@@ -93,7 +96,7 @@ func (self *consul) UInt(name string) (uint, error) {
 }
 
 func (self *consul) String(name string) (string, error) {
-	val, ok := self.values[self.name(name)]
+	val, ok := self.data[self.name(name)]
 	if !ok {
 		return "", nil
 	}
@@ -101,7 +104,7 @@ func (self *consul) String(name string) (string, error) {
 }
 
 func (self *consul) Bool(name string) (bool, error) {
-	val, ok := self.values[self.name(name)]
+	val, ok := self.data[self.name(name)]
 	if !ok {
 		return false, nil
 	}
@@ -114,6 +117,10 @@ func (self *consul) Bool(name string) (bool, error) {
 
 func (self *consul) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
 	return []interface{}{}, nil
+}
+
+func (self *consul) Export(opt ...go_config.SourceOpt) ([]byte, error) {
+	return []byte{}, nil
 }
 
 func (self *consul) name(name string) string {

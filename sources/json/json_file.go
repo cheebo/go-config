@@ -8,19 +8,21 @@ import (
 	"strings"
 )
 
-type jsonFIle struct {
-	path string
-	data map[string]interface{}
+type jsonFile struct {
+	path   string
+	data   map[string]interface{}
+	values map[string]*go_config.Variable
 }
 
 func FileSource(path string) go_config.Source {
-	return &jsonFIle{
+	return &jsonFile{
 		path: path,
 		data: map[string]interface{}{},
 	}
 }
 
-func (self *jsonFIle) Init(vals map[string]*go_config.Variable) error {
+func (self *jsonFile) Init(vals map[string]*go_config.Variable) error {
+	self.values = vals
 	data, err := ioutil.ReadFile(self.path)
 	if err != nil {
 		return err
@@ -29,7 +31,7 @@ func (self *jsonFIle) Init(vals map[string]*go_config.Variable) error {
 	return err
 }
 
-func (self *jsonFIle) Int(name string) (int, error) {
+func (self *jsonFile) Int(name string) (int, error) {
 	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -43,7 +45,7 @@ func (self *jsonFIle) Int(name string) (int, error) {
 	return 0, nil
 }
 
-func (self *jsonFIle) Float(name string) (float64, error) {
+func (self *jsonFile) Float(name string) (float64, error) {
 	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -55,7 +57,7 @@ func (self *jsonFIle) Float(name string) (float64, error) {
 	return 0, nil
 }
 
-func (self *jsonFIle) UInt(name string) (uint, error) {
+func (self *jsonFile) UInt(name string) (uint, error) {
 	val, ok := self.data[self.name(name)]
 	if !ok {
 		return 0, nil
@@ -69,7 +71,7 @@ func (self *jsonFIle) UInt(name string) (uint, error) {
 	return 0, nil
 }
 
-func (self *jsonFIle) String(name string) (string, error) {
+func (self *jsonFile) String(name string) (string, error) {
 	val, ok := self.data[self.name(name)]
 	if !ok {
 		return "", nil
@@ -81,7 +83,7 @@ func (self *jsonFIle) String(name string) (string, error) {
 	return "", nil
 }
 
-func (self *jsonFIle) Bool(name string) (bool, error) {
+func (self *jsonFile) Bool(name string) (bool, error) {
 	val, ok := self.data[self.name(name)]
 	if !ok {
 		return false, nil
@@ -93,11 +95,16 @@ func (self *jsonFIle) Bool(name string) (bool, error) {
 	return false, nil
 }
 
-func (self *jsonFIle) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+func (self *jsonFile) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
 	return []interface{}{}, nil
 }
 
-func (self *jsonFIle) name(name string) string {
+func (self *jsonFile) Export(opt ...go_config.SourceOpt) ([]byte, error) {
+
+	return []byte{}, nil
+}
+
+func (self *jsonFile) name(name string) string {
 	return strings.ToLower(name)
 
 }
