@@ -1,5 +1,11 @@
 package types
 
+import "github.com/pkg/errors"
+
+var (
+	ErrUnsupportedDriver = errors.New("Unsupported database driver")
+)
+
 type DatabaseConfig struct {
 	Host     string `json:"host"`
 	Port     uint   `json:"port"`
