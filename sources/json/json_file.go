@@ -96,7 +96,17 @@ func (self *jsonFile) Bool(name string) (bool, error) {
 }
 
 func (self *jsonFile) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	return []interface{}{}, nil
+	val, ok := self.data[self.name(name)]
+	if !ok {
+		return []interface{}{}, nil
+	}
+	switch val.(type) {
+	case string:
+		src := val.(string)
+		return utils.ParseSlice(src, delimiter, kind)
+	default:
+		return []interface{}{}, nil
+	}
 }
 
 func (self *jsonFile) Export(opt ...go_config.SourceOpt) ([]byte, error) {
