@@ -3,7 +3,6 @@ package utils_test
 import (
 	"encoding/json"
 	"github.com/cheebo/go-config/utils"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -42,8 +41,7 @@ func TestParse(t *testing.T) {
 	data, err := json.Marshal(cfg)
 	assert.NoError(err)
 
-	m := utils.JsonParse(data)
-	spew.Dump(m)
+	m, _ := utils.JsonParse(data)
 	assert.Equal(cfg.Name, m["name"].(string), "Incorrect name")
 	assert.Equal(float64(cfg.Age), m["age"].(float64), "Incorrect age")
 	assert.Equal(cfg.Alian, m["alian"].(bool), "Incorrect alian status")
