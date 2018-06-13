@@ -5,17 +5,24 @@ import (
 	"strings"
 )
 
-func JsonParse(data []byte) (map[string]interface{}, error) {
-	in := map[string]interface{}{}
-	out := map[string]interface{}{}
+func JsonParse(data interface{}) (map[string]interface{}, error) {
+	in := make(map[string]interface{})
+	out := make(map[string]interface{})
 
-	err := json.Unmarshal(data, &in)
-	if err != nil {
-		return out, err
-	}
+	switch d := data.(type) {
+	case []byte:
+		err := json.Unmarshal(d, &in)
+		if err != nil {
+			return out, err
+		}
 
-	for f, v := range in {
-		processJSON(v, name(f, ""), out)
+		for f, v := range in {
+			processJSON(v, name(f, ""), out)
+		}
+	case map[string]string:
+		for f, v := range d {
+			processJSON(v, name(f, ""), out)
+		}
 	}
 	return out, nil
 }
