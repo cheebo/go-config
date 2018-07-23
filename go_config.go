@@ -46,48 +46,48 @@ func (gc *config) Get(key string) interface{} {
 	return value
 }
 
-func (gc *config) Bool(key string) (bool, error) {
+func (gc *config) Bool(key string) bool {
 	val := gc.Get(key)
-	if reflect.ValueOf(val).IsNil() {
-		return false, NoVariablesInitialised
+	if !reflect.ValueOf(val).CanAddr() {
+		return false
 	}
-	return val.(bool), nil
+	return val.(bool)
 }
 
-func (gc *config) Float(key string) (float64, error) {
+func (gc *config) Float(key string) float64 {
 	val := gc.Get(key)
-	if reflect.ValueOf(val).IsNil() {
-		return 0, NoVariablesInitialised
+	if !reflect.ValueOf(val).CanAddr() {
+		return 0
 	}
-	return val.(float64), nil
+	return val.(float64)
 }
 
-func (gc *config) Int(key string) (int, error) {
+func (gc *config) Int(key string) int {
 	val := gc.Get(key)
-	if reflect.ValueOf(val).IsNil() {
-		return 0, NoVariablesInitialised
+	if !reflect.ValueOf(val).CanAddr() {
+		return 0
 	}
-	return val.(int), nil
+	return val.(int)
 }
 
-func (gc *config) UInt(key string) (uint, error) {
+func (gc *config) UInt(key string) uint {
 	val := gc.Get(key)
-	if reflect.ValueOf(val).IsNil() {
-		return 0, NoVariablesInitialised
+	if !reflect.ValueOf(val).CanAddr() {
+		return 0
 	}
-	return val.(uint), nil
+	return val.(uint)
 }
 
-func (gc *config) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	return []interface{}{}, nil
+func (gc *config) Slice(key, delimiter string, kind reflect.Kind) []interface{} {
+	return []interface{}{}
 }
 
-func (gc *config) String(key string) (string, error) {
+func (gc *config) String(key string) string {
 	val := gc.Get(key)
-	if reflect.ValueOf(val).IsNil() {
-		return "", NoVariablesInitialised
+	if !reflect.ValueOf(val).CanAddr() {
+		return ""
 	}
-	return val.(string), nil
+	return val.(string)
 }
 
 func (gc *config) StringMap(key string) map[string]interface{} {

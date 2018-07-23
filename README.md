@@ -21,22 +21,19 @@ type Config struct {
 }
 
 func main() {
-	c := Config{}
-	cfgr := configurer.New()
-	
-	// parse env variables
-	cfgr.Use(env.Source())
-	
-	// parse flags
-	cfgr.Use(flag.Source())
-	
-	// parse json file
-	cfgr.Use(json.FileSource("./config/configurations.json"))
-	
-	// parse consul KV values
-	cfgr.Use(consul.Source("/project/name", "json"))
-	
-	cfgr.Configure(&c)
+	cfg := go_config.New()
+	// use config file
+    fs, err := file.Source("./fixtures/config.json", go_config.JSON)
+    if err != nil {
+        panic(err)
+    }
+    // use environment variables and file config
+    cfg.UseSource(env.Source("GO"), env.Source(""), fs)
+    // get variables and isSet state
+    fmt.Println(cfg.Get("name"), cfg.IsSet("name"))
+    fmt.Println(cfg.Get("amqp.url"), cfg.IsSet("amqp.url"))
+    fmt.Println(cfg.Get("amqp.url2"), cfg.IsSet("amqp.url2"))
+    fmt.Println(cfg.Get("home"), cfg.IsSet("home"), cfg.IsSet("myhome"))
 }
 ```
 
@@ -50,12 +47,12 @@ Config source (cs) is the flag that defines configuration source.
 
 Supported config sources:
 - environment variables
-- flags
+- flags (FIXME: read flags)
 - file
-  - file:json
-  - file:yaml
-  - file:toml
-- consul
+  - json
+  - yaml
+  - toml
+- consul (FIXME: implement data import from consul)
 
 #### Consul CS
 
@@ -70,10 +67,3 @@ Supported field tags:
 - cfg:"param_name"
 - description:"variable description"
 - default:"default_value"
-- consul:"/kv/path/to/json/config"
-
-Supported sources:
-- env variables
-- flags
-- json file
-- consul (you can define relative path in structure's tag and basepath in consul source creation)

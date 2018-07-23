@@ -16,6 +16,7 @@ func main() {
 	cfg.UseSource(env.Source("GO"), env.Source(""), fs)
 	fmt.Println(cfg.Get("name"), cfg.IsSet("name"))
 	fmt.Println(cfg.Get("amqp.url"), cfg.IsSet("amqp.url"))
-	fmt.Println(cfg.Get("amqp.url2"), cfg.IsSet("amqp.url2"))
+	fmt.Println(cfg.String("amqp.url2"), cfg.IsSet("amqp.url2"))
+	fmt.Println(cfg.Int("amqp.port"), cfg.IsSet("amqp.port"))
 	fmt.Println(cfg.Get("home"), cfg.IsSet("home"), cfg.IsSet("myhome"))
 }
