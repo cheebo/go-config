@@ -9,16 +9,16 @@ import (
 	"io"
 )
 
-type ConfigType string
+type ConfigType int
 
 type ConfigParseError struct {
 	err error
 }
 
 const (
-	JSON ConfigType = "json"
-	YAML ConfigType = "yaml"
-	TOML ConfigType = "toml"
+	JSON ConfigType = iota
+	YAML
+	TOML
 )
 
 func (pe ConfigParseError) Error() string {
