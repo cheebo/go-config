@@ -1,130 +1,127 @@
 package consul
 
 import (
-	"github.com/cheebo/consul-utils"
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/types"
-	"github.com/cheebo/go-config/utils"
-	"github.com/hashicorp/consul/api"
+	"github.com/spf13/cast"
 	"reflect"
 	"strings"
 )
+
+type DataSource struct {
+	Path      string
+	Type      go_config.ConfigType
+	Namespace string
+}
 
 type consul struct {
 	prefix string
 	config types.ConsulConfig
 	data   map[string]interface{}
-	consul map[string]interface{}
-	values map[string]*go_config.Variable
 }
 
-// func Source(path string, format string, namespace string, config *types.ConsulConfig) go_config.Source
-// Source("/s2w/mail/config/db", "json", "db", nil)
-func Source(prefix string, ext string, config types.ConsulConfig) go_config.Source {
+func Source(config types.ConsulConfig, dataSource ...DataSource) go_config.Source {
+	for _, ds := range dataSource {
+		// @todo import data from consul into local map
+		if len(ds.Namespace) == 0 {
+			continue
+		}
+		// @todo get data, ReadConfig and save to map
+	}
 	return &consul{
-		prefix: prefix,
 		config: config,
 		data:   make(map[string]interface{}),
-		consul: make(map[string]interface{}),
 	}
 }
 
-func (self *consul) Init(vals map[string]*go_config.Variable) error {
-	self.values = vals
-
-	config := &api.Config{Address: self.config.Addr, Scheme: self.config.Scheme, Token: self.config.Token}
-	client, err := api.NewClient(config)
-	if err != nil {
-		return err
-	}
-
-	for name, val := range vals {
-		name = self.name(name)
-
-		tag := val.Tag.Get("consul")
-		opts := strings.Split(tag, ",")
-
-		if len(opts[0]) > 0 {
-			cc, err := consul_utils.GetKV(client, self.prefix+opts[0], consul_utils.QueryOptions{
-				Datacenter: self.config.Datacenter,
-				Token:      self.config.Token,
-			})
-			if err != nil {
-				return err
-			}
-
-			switch val.Type.Kind() {
-			case reflect.Struct:
-				fallthrough
-			case reflect.Slice:
-				m, err := utils.JsonParse([]byte(cc))
-				if err != nil {
-					return err
-				}
-				for n, v := range m {
-					self.data[name+"."+n] = v
-				}
-			default:
-				self.data[name] = cc
-			}
-		}
-	}
-	return nil
+func (c *consul) Get(key string) interface{} {
+	return c.lookup(c.data, c.key(key))
 }
 
-func (self *consul) Int(name string) (int, error) {
-	val, ok := self.data[self.name(name)]
-	if !ok {
-		return 0, nil
+func (c *consul) Bool(key string) (bool, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return false, go_config.NoVariablesInitialised
 	}
-	return int(val.(float64)), nil
+	return cast.ToBoolE(val)
 }
 
-func (self *consul) Float(name string) (float64, error) {
-	val, ok := self.data[self.name(name)]
-	if !ok {
-		return 0, nil
+func (c *consul) Float(key string) (float64, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return 0, go_config.NoVariablesInitialised
 	}
-
-	return float64(val.(float64)), nil
+	return cast.ToFloat64E(val)
 }
 
-func (self *consul) UInt(name string) (uint, error) {
-	val, ok := self.data[self.name(name)]
-	if !ok {
-		return 0, nil
+func (c *consul) Int(key string) (int, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return 0, go_config.NoVariablesInitialised
 	}
-	return uint(val.(float64)), nil
+	return cast.ToIntE(val)
 }
 
-func (self *consul) String(name string) (string, error) {
-	val, ok := self.data[self.name(name)]
-	if !ok {
-		return "", nil
+func (c *consul) UInt(key string) (uint, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return 0, go_config.NoVariablesInitialised
 	}
-	return val.(string), nil
+	return cast.ToUintE(val)
 }
 
-func (self *consul) Bool(name string) (bool, error) {
-	val, ok := self.data[self.name(name)]
-	if !ok {
-		return false, nil
-	}
-	b, ok := val.(bool)
-	if !ok {
-		return false, nil
-	}
-	return b, nil
-}
-
-func (self *consul) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+func (c *consul) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
 	return []interface{}{}, nil
 }
 
-func (self *consul) Export(opt ...go_config.SourceOpt) ([]byte, error) {
-	return []byte{}, nil
+func (c *consul) String(key string) (string, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return "", go_config.NoVariablesInitialised
+	}
+	return cast.ToStringE(val)
 }
 
-func (self *consul) name(name string) string {
-	return strings.ToLower(name)
+func (c *consul) StringMap(key string) map[string]interface{} {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return map[string]interface{}{}
+	}
+	return cast.ToStringMap(val)
+}
+
+func (c *consul) IsSet(key string) bool {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return false
+	}
+	return true
+}
+
+func (c *consul) key(key string) []string {
+	return strings.Split(key, ".")
+}
+
+func (c *consul) lookup(source map[string]interface{}, key []string) interface{} {
+	if len(key) == 0 {
+		return source
+	}
+
+	next, ok := source[key[0]]
+	if ok {
+		if len(key) == 1 {
+			return next
+		}
+
+		// Nested case
+		switch next.(type) {
+		case map[interface{}]interface{}:
+			return c.lookup(cast.ToStringMap(next), key[1:])
+		case map[string]interface{}:
+			return c.lookup(next.(map[string]interface{}), key[1:])
+		default:
+			return nil
+		}
+	}
+	return nil
 }
