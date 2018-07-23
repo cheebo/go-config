@@ -1,8 +1,8 @@
-package json_test
+package file_test
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/sources/json"
+	"github.com/cheebo/go-config/sources/file"
 	"github.com/cheebo/go-config/types"
 	"github.com/stretchr/testify/assert"
 
@@ -17,8 +17,10 @@ func TestJsonFileSource(t *testing.T) {
 	assert := assert.New(t)
 	cfg := Config{}
 	c := go_config.New()
-	c.Use(json.FileSource("./fixtures/config.json"))
-	c.Configure(&cfg)
+	fileSource, err := file.Source("./fixtures/config.json", go_config.JSON)
+	assert.NoError(err)
+
+	c.UseSource(fileSource)
 
 	assert.Equal("localhost", cfg.AMQP.URL)
 	assert.Equal("exch", cfg.AMQP.Exchange)

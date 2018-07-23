@@ -34,11 +34,37 @@ func main() {
 	cfgr.Use(json.FileSource("./config/configurations.json"))
 	
 	// parse consul KV values
-	cfgr.Use(consul.Source("/project/name"))
+	cfgr.Use(consul.Source("/project/name", "json"))
 	
 	cfgr.Configure(&c)
 }
 ```
+
+## Config Source
+
+Config source (cs) is the flag that defines configuration source.
+
+```bash
+./service -cs="cs=<type>,opt=arg,opt[=arg];<type>,opt=arg,..."
+```
+
+Supported config sources:
+- environment variables
+- flags
+- file
+  - file:json
+  - file:yaml
+  - file:toml
+- consul
+
+#### Consul CS
+
+```
+cs="consul;"
+```
+
+## Tags
+
 
 Supported field tags:
 - cfg:"param_name"

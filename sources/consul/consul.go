@@ -18,7 +18,9 @@ type consul struct {
 	values map[string]*go_config.Variable
 }
 
-func Source(prefix string, config types.ConsulConfig) go_config.Source {
+// func Source(path string, format string, namespace string, config *types.ConsulConfig) go_config.Source
+// Source("/s2w/mail/config/db", "json", "db", nil)
+func Source(prefix string, ext string, config types.ConsulConfig) go_config.Source {
 	return &consul{
 		prefix: prefix,
 		config: config,

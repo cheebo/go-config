@@ -2,7 +2,6 @@ package env
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/utils"
 	"os"
 	"reflect"
 	"strconv"
@@ -10,62 +9,88 @@ import (
 )
 
 type env struct {
-	values map[string]*go_config.Variable
+	prefix string
 }
 
-func Source() go_config.Source {
-	return &env{}
+func Source(prefix string) go_config.Source {
+	return &env{
+		prefix: prefix,
+	}
 }
 
-func (self *env) Init(vals map[string]*go_config.Variable) error {
-	self.values = vals
-	return nil
+func (e *env) Get(key string) interface{} {
+	val, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return nil
+	}
+	return val
 }
 
-func (self *env) Int(name string) (int, error) {
-	val := os.Getenv(self.name(name))
+func (e *env) Bool(key string) (bool, error) {
+	val, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return false, go_config.NoVariablesInitialised
+	}
+	return strconv.ParseBool(val)
+}
+
+func (e *env) Int(key string) (int, error) {
+	val, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return 0, go_config.NoVariablesInitialised
+	}
 	return strconv.Atoi(val)
 }
 
-func (self *env) Float(name string) (float64, error) {
-	val, err := strconv.ParseFloat(os.Getenv(self.name(name)), 64)
+func (e *env) Float(key string) (float64, error) {
+	v, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return 0, go_config.NoVariablesInitialised
+	}
+	val, err := strconv.ParseFloat(v, 64)
 	if err != nil {
 		return 0, err
 	}
 	return val, nil
 }
 
-func (self *env) UInt(name string) (uint, error) {
-	val, err := strconv.ParseUint(os.Getenv(self.name(name)), 10, 64)
+func (e *env) UInt(key string) (uint, error) {
+	v, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return 0, go_config.NoVariablesInitialised
+	}
+	val, err := strconv.ParseUint(v, 10, 64)
 	if err != nil {
 		return 0, err
 	}
 	return uint(val), nil
 }
 
-func (self *env) String(name string) (string, error) {
-	return os.Getenv(self.name(name)), nil
+func (e *env) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
+	return []interface{}{}, nil
 }
 
-func (self *env) Bool(name string) (bool, error) {
-	val := os.Getenv(self.name(name))
-	return strconv.ParseBool(val)
-}
-
-func (self *env) Slice(name, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	src := os.Getenv(self.name(name))
-	return utils.ParseSlice(src, delimiter, kind)
-}
-
-func (self *env) Export(opt ...go_config.SourceOpt) ([]byte, error) {
-
-	for k, v := range self.values {
-		println(k, v)
+func (e *env) String(key string) (string, error) {
+	val, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return "", go_config.NoVariablesInitialised
 	}
-
-	return []byte{}, nil
+	return val, nil
 }
 
-func (self *env) name(name string) string {
-	return strings.Replace(strings.ToUpper(name), ".", "_", -1)
+func (e *env) StringMap(key string) map[string]interface{} {
+	return map[string]interface{}{}
+}
+
+func (e *env) IsSet(key string) bool {
+	_, ok := os.LookupEnv(e.key(key))
+	return ok
+}
+
+func (e *env) key(key string) string {
+	key = strings.Replace(strings.ToUpper(key), ".", "_", -1)
+	if len(e.prefix) > 0 {
+		return strings.ToUpper(e.prefix) + "_" + key
+	}
+	return key
 }

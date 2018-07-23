@@ -1,46 +1,21 @@
 package main
 
 import (
-	cfg "github.com/cheebo/go-config"
+	"fmt"
+	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/sources/env"
-	"github.com/cheebo/go-config/sources/flag"
-	"github.com/cheebo/go-config/types"
-	"github.com/davecgh/go-spew/spew"
+	"github.com/cheebo/go-config/sources/file"
 )
 
-type Master struct {
-	AMQP *types.AMQPConfig `consul:"amqp"`
-}
-
-type Config struct {
-	Master Master `description:"-"`
-
-	Name string `description:"user's name'"`
-	Pass string `cfg:"password" description:"user's password'"`
-
-	GasPeerTx float64 `default:"10.11" description:"gas per transaction"`
-
-	Timeout        uint `default:"101" description:"transaction timeout"`
-	PricePerAction int  `default:"price per action"`
-
-	AllowRegistration bool `default:"true" default:"allow new user registration"`
-
-	Ips []string `description:"-"`
-}
-
 func main() {
-	c := Config{}
-	cfgr := cfg.New()
-	eSrc := env.Source()
-	cfgr.Use(eSrc)
-	cfgr.Use(flag.Source())
-	//cfgr.Use(cfg.ConsulSource("/example/config", types.ConsulConfig{
-	//	Addr:   "localhost:8500",
-	//	Scheme: "http",
-	//}))
-	cfgr.Configure(&c)
-
-	//spew.Dump(c)
-	//spew.Dump(cfgr.Usage())
-	spew.Dump(eSrc.Export())
+	cfg := go_config.New()
+	fs, err := file.Source("./fixtures/config.json", go_config.JSON)
+	if err != nil {
+		panic(err)
+	}
+	cfg.UseSource(env.Source("GO"), env.Source(""), fs)
+	fmt.Println(cfg.Get("name"), cfg.IsSet("name"))
+	fmt.Println(cfg.Get("amqp.url"), cfg.IsSet("amqp.url"))
+	fmt.Println(cfg.Get("amqp.url2"), cfg.IsSet("amqp.url2"))
+	fmt.Println(cfg.Get("home"), cfg.IsSet("home"), cfg.IsSet("myhome"))
 }
