@@ -6,20 +6,6 @@ Package provides routines that loads configuration into provided structure from 
 Example
 
 ```go
-type Config struct {
-	Redis *types.RedisConfig
-
-	Name  string `description:"user's name'"`
-	Pass  string `cfg:"password" description:"user's password'"`
-
-	GasPeerTx           float64
-
-	Timeout             uint
-	PricePerAction      int
-
-	AllowRegistration   bool
-}
-
 func main() {
 	cfg := go_config.New()
 	
