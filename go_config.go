@@ -30,6 +30,7 @@ func (gc *config) UseSource(sources ...Source) {
 }
 
 func (gc *config) Unmarshal(v interface{}, prefix string) error {
+	// @todo implement
 	return NoVariablesInitialised
 }
 
@@ -77,8 +78,12 @@ func (gc *config) UInt(key string) uint {
 	return val.(uint)
 }
 
-func (gc *config) Slice(key, delimiter string, kind reflect.Kind) []interface{} {
-	return []interface{}{}
+func (gc *config) Slice(key, delimiter string) []interface{} {
+	val := gc.Get(key)
+	if val == nil {
+		return []interface{}{}
+	}
+	return val.([]interface{})
 }
 
 func (gc *config) String(key string) string {
@@ -90,7 +95,11 @@ func (gc *config) String(key string) string {
 }
 
 func (gc *config) StringMap(key string) map[string]interface{} {
-	return map[string]interface{}{}
+	val := gc.Get(key)
+	if val == nil {
+		return map[string]interface{}{}
+	}
+	return val.(map[string]interface{})
 }
 
 func (gc *config) IsSet(key string) bool {

@@ -103,8 +103,12 @@ func (c *consul) UInt(key string) (uint, error) {
 	return cast.ToUintE(val)
 }
 
-func (c *consul) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	return []interface{}{}, nil
+func (c *consul) Slice(key, delimiter string) ([]interface{}, error) {
+	val := c.lookup(c.data, c.key(key))
+	if val == nil {
+		return []interface{}{}, go_config.NoVariablesInitialised
+	}
+	return cast.ToSliceE(val)
 }
 
 func (c *consul) String(key string) (string, error) {

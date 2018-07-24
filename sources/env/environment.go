@@ -2,6 +2,7 @@ package env
 
 import (
 	"github.com/cheebo/go-config"
+	"github.com/spf13/cast"
 	"os"
 	"reflect"
 	"strconv"
@@ -66,8 +67,12 @@ func (e *env) UInt(key string) (uint, error) {
 	return uint(val), nil
 }
 
-func (e *env) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	return []interface{}{}, nil
+func (e *env) Slice(key, delimiter string) ([]interface{}, error) {
+	val, ok := os.LookupEnv(e.key(key))
+	if !ok {
+		return []interface{}{}, go_config.NoVariablesInitialised
+	}
+	return cast.ToSliceE(strings.Split(val, delimiter))
 }
 
 func (e *env) String(key string) (string, error) {
@@ -79,6 +84,7 @@ func (e *env) String(key string) (string, error) {
 }
 
 func (e *env) StringMap(key string) map[string]interface{} {
+	// @todo implement
 	return map[string]interface{}{}
 }
 

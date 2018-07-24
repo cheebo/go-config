@@ -81,8 +81,12 @@ func (f *file) UInt(key string) (uint, error) {
 	return cast.ToUintE(val)
 }
 
-func (f *file) Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error) {
-	return []interface{}{}, nil
+func (f *file) Slice(key, delimiter string) ([]interface{}, error) {
+	val := f.lookup(f.data, f.key(key))
+	if val == nil {
+		return []interface{}{}, go_config.NoVariablesInitialised
+	}
+	return cast.ToSliceE(val)
 }
 
 func (f *file) String(key string) (string, error) {

@@ -28,7 +28,7 @@ type Source interface {
 	Float(key string) (float64, error)
 	Int(key string) (int, error)
 	UInt(key string) (uint, error)
-	Slice(key, delimiter string, kind reflect.Kind) ([]interface{}, error)
+	Slice(key, delimiter string) ([]interface{}, error)
 	String(key string) (string, error)
 	StringMap(key string) map[string]interface{}
 
