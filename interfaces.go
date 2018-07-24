@@ -14,7 +14,7 @@ type Config interface {
 	Float(key string) float64
 	Int(key string) int
 	UInt(key string) uint
-	Slice(key, delimiter string, kind reflect.Kind) []interface{}
+	Slice(key, delimiter string) []interface{}
 	String(key string) string
 	StringMap(key string) map[string]interface{}
 

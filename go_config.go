@@ -2,7 +2,6 @@ package go_config
 
 import (
 	"errors"
-	"reflect"
 )
 
 type config struct {
