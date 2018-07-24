@@ -1,14 +1,18 @@
 package consul
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/types"
+	"github.com/hashicorp/consul/api"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"reflect"
 	"strings"
 )
 
-type DataSource struct {
+type Consul struct {
 	Path      string
 	Type      go_config.ConfigType
 	Namespace string
@@ -20,18 +24,47 @@ type consul struct {
 	data   map[string]interface{}
 }
 
-func Source(config types.ConsulConfig, dataSource ...DataSource) go_config.Source {
+func Source(log *logrus.Logger, config types.ConsulConfig, dataSource ...Consul) (go_config.Source, error) {
+	client, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		return nil, err
+	}
+
+	data := make(map[string]interface{})
+
 	for _, ds := range dataSource {
-		// @todo import data from consul into local map
-		if len(ds.Namespace) == 0 {
+		q := &api.QueryOptions{
+			Datacenter:        config.Datacenter,
+			Token:             config.Token,
+			RequireConsistent: true,
+		}
+		kvpair, _, err := client.KV().Get(ds.Path, q)
+		if err != nil {
+			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't read config from %s err: %s", ds.Path, err.Error()))
 			continue
 		}
-		// @todo get data, ReadConfig and save to map
+		if kvpair == nil {
+			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't read config from %s", ds.Path))
+			continue
+		}
+
+		m := map[string]interface{}{}
+		err = go_config.ReadConfig(bytes.NewBuffer([]byte(strings.TrimSpace(string(kvpair.Value)))), ds.Type, m)
+		if err != nil {
+			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't parse config from %s type %s", ds.Path, ds.Type))
+			continue
+		}
+
+		err = go_config.MergeMapWithPath(data, m, strings.Split(ds.Namespace, "."))
+		if err != nil {
+			log.Error(err)
+		}
 	}
+
 	return &consul{
 		config: config,
-		data:   make(map[string]interface{}),
-	}
+		data:   data,
+	}, nil
 }
 
 func (c *consul) Get(key string) interface{} {

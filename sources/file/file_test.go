@@ -17,7 +17,7 @@ func TestJsonFileSource(t *testing.T) {
 	assert := assert.New(t)
 	cfg := Config{}
 	c := go_config.New()
-	fileSource, err := file.Source("./fixtures/config.json", go_config.JSON)
+	fileSource, err := file.Source(file.File{Path: "./fixtures/config.json", Type: go_config.JSON, Namespace: ""})
 	assert.NoError(err)
 
 	c.UseSource(fileSource)

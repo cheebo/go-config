@@ -9,26 +9,39 @@ import (
 	"strings"
 )
 
+type File struct {
+	Path      string
+	Type      go_config.ConfigType
+	Namespace string
+}
+
 type file struct {
-	path string
+	fs   []File
 	ns   string
 	data map[string]interface{}
 }
 
-func Source(path string, configType go_config.ConfigType) (go_config.Source, error) {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
+func Source(fs ...File) (go_config.Source, error) {
+	config := map[string]interface{}{}
+
+	for _, f := range fs {
+		data, err := ioutil.ReadFile(f.Path)
+		if err != nil {
+			return nil, err
+		}
+
+		m := map[string]interface{}{}
+		err = go_config.ReadConfig(bytes.NewBuffer(data), f.Type, m)
+		if err != nil {
+			return nil, err
+		}
+
+		go_config.MergeMapWithPath(config, m, strings.Split(f.Namespace, "."))
 	}
 
-	m := map[string]interface{}{}
-	err = go_config.ReadConfig(bytes.NewBuffer(data), configType, m)
-	if err != nil {
-		return nil, err
-	}
 	return &file{
-		path: path,
-		data: m,
+		fs:   fs,
+		data: config,
 	}, nil
 }
 

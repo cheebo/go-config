@@ -37,7 +37,6 @@ func (gc *config) Get(key string) interface{} {
 	var value interface{}
 	for _, src := range gc.sources {
 		val := src.Get(key)
-		// @todo check nil correct
 		if val == nil {
 			continue
 		}
@@ -48,7 +47,7 @@ func (gc *config) Get(key string) interface{} {
 
 func (gc *config) Bool(key string) bool {
 	val := gc.Get(key)
-	if !reflect.ValueOf(val).CanAddr() {
+	if val == nil {
 		return false
 	}
 	return val.(bool)
@@ -56,7 +55,7 @@ func (gc *config) Bool(key string) bool {
 
 func (gc *config) Float(key string) float64 {
 	val := gc.Get(key)
-	if !reflect.ValueOf(val).CanAddr() {
+	if val == nil {
 		return 0
 	}
 	return val.(float64)
@@ -64,7 +63,7 @@ func (gc *config) Float(key string) float64 {
 
 func (gc *config) Int(key string) int {
 	val := gc.Get(key)
-	if !reflect.ValueOf(val).CanAddr() {
+	if val == nil {
 		return 0
 	}
 	return val.(int)
@@ -72,7 +71,7 @@ func (gc *config) Int(key string) int {
 
 func (gc *config) UInt(key string) uint {
 	val := gc.Get(key)
-	if !reflect.ValueOf(val).CanAddr() {
+	if val == nil {
 		return 0
 	}
 	return val.(uint)
@@ -84,7 +83,7 @@ func (gc *config) Slice(key, delimiter string, kind reflect.Kind) []interface{} 
 
 func (gc *config) String(key string) string {
 	val := gc.Get(key)
-	if !reflect.ValueOf(val).CanAddr() {
+	if val == nil {
 		return ""
 	}
 	return val.(string)
