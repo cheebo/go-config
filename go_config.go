@@ -12,15 +12,9 @@ type config struct {
 }
 
 var (
-	GoConfig Config
-
 	NoVariablesInitialised = errors.New("no variables initialised")
 	NotAStructPtr          = errors.New("expects pointer to a struct")
 )
-
-func init() {
-	GoConfig = New()
-}
 
 func New() Config {
 	return &config{
@@ -175,9 +169,11 @@ func (gc *config) setup(v interface{}, parent string) error {
 		case reflect.String:
 			refField.SetString(cast.ToString(gc.Get(name)))
 		case reflect.Slice:
-			// @todo fill slice
+			m := cast.ToSlice(gc.Get(name))
+			refField.Set(reflect.ValueOf(m))
 		case reflect.Map:
-			// @todo fill map
+			m := cast.ToStringMap(gc.Get(name))
+			refField.Set(reflect.ValueOf(m))
 		}
 
 	}

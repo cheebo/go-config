@@ -9,6 +9,7 @@
     "autodelete": true,
     "deliverymode": 2
   },
+  "nodes": ["10.8.0.1","10.8.0.2"],
   "name": "John Doe",
   "age": 30
 }
