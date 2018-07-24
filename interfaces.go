@@ -1,9 +1,5 @@
 package go_config
 
-import (
-	"reflect"
-)
-
 type Config interface {
 	UseSource(sources ...Source)
 	Unmarshal(v interface{}, prefix string) error
