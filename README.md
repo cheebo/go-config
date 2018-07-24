@@ -22,24 +22,39 @@ type Config struct {
 
 func main() {
 	cfg := go_config.New()
+	
 	// use config file
-    fs, err := file.Source("./fixtures/config.json", go_config.JSON)
+    fs, err := file.Source(
+    	file.File{"./fixtures/config.json", go_config.JSON, ""},
+    )
     if err != nil {
         panic(err)
     }
+    
     // use environment variables and file config
+    // the order is important: later sources override values from previous sources
     cfg.UseSource(env.Source("GO"), env.Source(""), fs)
+    
     // get variables and isSet state
     fmt.Println(cfg.Get("name"), cfg.IsSet("name"))
     fmt.Println(cfg.Get("amqp.url"), cfg.IsSet("amqp.url"))
-    fmt.Println(cfg.Get("amqp.url2"), cfg.IsSet("amqp.url2"))
-    fmt.Println(cfg.Get("home"), cfg.IsSet("home"), cfg.IsSet("myhome"))
+    fmt.Println(cfg.Get("amqp.addr"), cfg.IsSet("amqp.addr"))
+    
+    // Get ENV variable
+    fmt.Println(cfg.Get("home"), cfg.IsSet("home"))
+    
+    // Unmarshal config data into structure
+    m := types.AMQPConfig{}
+    err = cfg.Unmarshal(&m, "amqp")
+    if err != nil {
+        println(err.Error())
+    }
 }
 ```
 
 ## Config Source
 
-Config source (cs) is the flag that defines configuration source.
+[futured] Config source (cs) is the flag that defines configuration source.
 
 ```bash
 ./service -cs="cs=<type>,opt=arg,opt[=arg];<type>,opt=arg,..."
@@ -47,23 +62,9 @@ Config source (cs) is the flag that defines configuration source.
 
 Supported config sources:
 - environment variables
-- flags (FIXME: read flags)
+- flags (FIXME: read data from flags)
 - file
   - json
   - yaml
   - toml
-- consul (FIXME: implement data import from consul)
-
-#### Consul CS
-
-```
-cs="consul;"
-```
-
-## Tags
-
-
-Supported field tags:
-- cfg:"param_name"
-- description:"variable description"
-- default:"default_value"
+- consul
