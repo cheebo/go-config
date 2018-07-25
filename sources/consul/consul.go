@@ -68,11 +68,11 @@ func Source(log *logrus.Logger, config types.ConsulConfig, dataSource ...Consul)
 }
 
 func (c *consul) Get(key string) interface{} {
-	return c.lookup(c.data, c.key(key))
+	return go_config.Lookup(c.data, c.key(key))
 }
 
 func (c *consul) Bool(key string) (bool, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return false, go_config.NoVariablesInitialised
 	}
@@ -80,7 +80,7 @@ func (c *consul) Bool(key string) (bool, error) {
 }
 
 func (c *consul) Float(key string) (float64, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -88,7 +88,7 @@ func (c *consul) Float(key string) (float64, error) {
 }
 
 func (c *consul) Int(key string) (int, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -96,7 +96,7 @@ func (c *consul) Int(key string) (int, error) {
 }
 
 func (c *consul) UInt(key string) (uint, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -104,7 +104,7 @@ func (c *consul) UInt(key string) (uint, error) {
 }
 
 func (c *consul) Slice(key, delimiter string) ([]interface{}, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return []interface{}{}, go_config.NoVariablesInitialised
 	}
@@ -112,7 +112,7 @@ func (c *consul) Slice(key, delimiter string) ([]interface{}, error) {
 }
 
 func (c *consul) String(key string) (string, error) {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return "", go_config.NoVariablesInitialised
 	}
@@ -120,7 +120,7 @@ func (c *consul) String(key string) (string, error) {
 }
 
 func (c *consul) StringMap(key string) map[string]interface{} {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return map[string]interface{}{}
 	}
@@ -128,7 +128,7 @@ func (c *consul) StringMap(key string) map[string]interface{} {
 }
 
 func (c *consul) IsSet(key string) bool {
-	val := c.lookup(c.data, c.key(key))
+	val := go_config.Lookup(c.data, c.key(key))
 	if val == nil {
 		return false
 	}
@@ -137,28 +137,4 @@ func (c *consul) IsSet(key string) bool {
 
 func (c *consul) key(key string) []string {
 	return strings.Split(key, ".")
-}
-
-func (c *consul) lookup(source map[string]interface{}, key []string) interface{} {
-	if len(key) == 0 {
-		return source
-	}
-
-	next, ok := source[key[0]]
-	if ok {
-		if len(key) == 1 {
-			return next
-		}
-
-		// Nested case
-		switch next.(type) {
-		case map[interface{}]interface{}:
-			return c.lookup(cast.ToStringMap(next), key[1:])
-		case map[string]interface{}:
-			return c.lookup(next.(map[string]interface{}), key[1:])
-		default:
-			return nil
-		}
-	}
-	return nil
 }

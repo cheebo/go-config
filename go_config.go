@@ -8,7 +8,8 @@ import (
 )
 
 type config struct {
-	sources []Source
+	sources  []Source
+	defaults map[string]interface{}
 }
 
 var (
@@ -18,7 +19,8 @@ var (
 
 func New() Config {
 	return &config{
-		sources: []Source{},
+		sources:  []Source{},
+		defaults: map[string]interface{}{},
 	}
 }
 
@@ -36,7 +38,14 @@ func (gc *config) Unmarshal(v interface{}, prefix string) error {
 		return NotAStructPtr
 	}
 
-	return gc.setup(v, prefix)
+	return gc.unmarshal(v, prefix)
+}
+
+func (gc *config) SetDefault(key string, val interface{}) {
+	path := strings.Split(key, ".")
+	m := map[string]interface{}{}
+	m[path[len(path)-1]] = val
+	MergeMapWithPath(gc.defaults, m, path[:len(path)-1])
 }
 
 func (gc *config) Get(key string) interface{} {
@@ -47,6 +56,9 @@ func (gc *config) Get(key string) interface{} {
 			continue
 		}
 		value = val
+	}
+	if value == nil {
+		value = Lookup(gc.defaults, strings.Split(key, "."))
 	}
 	return value
 }
@@ -116,7 +128,7 @@ func (gc *config) IsSet(key string) bool {
 	return false
 }
 
-func (gc *config) setup(v interface{}, parent string) error {
+func (gc *config) unmarshal(v interface{}, parent string) error {
 	refVal := reflect.ValueOf(v)
 
 	if refVal.Kind() == reflect.Ptr {
@@ -149,7 +161,7 @@ func (gc *config) setup(v interface{}, parent string) error {
 		}
 
 		if refField.Kind() == reflect.Struct {
-			gc.setup(refField.Addr().Interface(), name)
+			gc.unmarshal(refField.Addr().Interface(), name)
 			continue
 		}
 

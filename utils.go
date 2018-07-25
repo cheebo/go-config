@@ -20,3 +20,27 @@ func MergeMapWithPath(source map[string]interface{}, sub map[string]interface{},
 
 	return MergeMapWithPath(cast.ToStringMap(source[path[0]]), sub, path[1:])
 }
+
+func Lookup(source map[string]interface{}, key []string) interface{} {
+	if len(key) == 0 {
+		return source
+	}
+
+	next, ok := source[key[0]]
+	if ok {
+		if len(key) == 1 {
+			return next
+		}
+
+		// Nested case
+		switch next.(type) {
+		case map[interface{}]interface{}:
+			return Lookup(cast.ToStringMap(next), key[1:])
+		case map[string]interface{}:
+			return Lookup(next.(map[string]interface{}), key[1:])
+		default:
+			return nil
+		}
+	}
+	return nil
+}

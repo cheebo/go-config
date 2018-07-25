@@ -4,6 +4,8 @@ type Config interface {
 	UseSource(sources ...Source)
 	Unmarshal(v interface{}, prefix string) error
 
+	SetDefault(key string, val interface{})
+
 	Get(key string) interface{}
 
 	Bool(key string) bool

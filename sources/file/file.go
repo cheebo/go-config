@@ -45,11 +45,11 @@ func Source(fs ...File) (go_config.Source, error) {
 }
 
 func (f *file) Get(key string) interface{} {
-	return f.lookup(f.data, f.key(key))
+	return go_config.Lookup(f.data, f.key(key))
 }
 
 func (f *file) Bool(key string) (bool, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return false, go_config.NoVariablesInitialised
 	}
@@ -57,7 +57,7 @@ func (f *file) Bool(key string) (bool, error) {
 }
 
 func (f *file) Float(key string) (float64, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -65,7 +65,7 @@ func (f *file) Float(key string) (float64, error) {
 }
 
 func (f *file) Int(key string) (int, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -73,7 +73,7 @@ func (f *file) Int(key string) (int, error) {
 }
 
 func (f *file) UInt(key string) (uint, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
@@ -81,7 +81,7 @@ func (f *file) UInt(key string) (uint, error) {
 }
 
 func (f *file) Slice(key, delimiter string) ([]interface{}, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return []interface{}{}, go_config.NoVariablesInitialised
 	}
@@ -89,7 +89,7 @@ func (f *file) Slice(key, delimiter string) ([]interface{}, error) {
 }
 
 func (f *file) String(key string) (string, error) {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return "", go_config.NoVariablesInitialised
 	}
@@ -97,7 +97,7 @@ func (f *file) String(key string) (string, error) {
 }
 
 func (f *file) StringMap(key string) map[string]interface{} {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return map[string]interface{}{}
 	}
@@ -105,7 +105,7 @@ func (f *file) StringMap(key string) map[string]interface{} {
 }
 
 func (f *file) IsSet(key string) bool {
-	val := f.lookup(f.data, f.key(key))
+	val := go_config.Lookup(f.data, f.key(key))
 	if val == nil {
 		return false
 	}
@@ -114,28 +114,4 @@ func (f *file) IsSet(key string) bool {
 
 func (f *file) key(key string) []string {
 	return strings.Split(key, ".")
-}
-
-func (f *file) lookup(source map[string]interface{}, key []string) interface{} {
-	if len(key) == 0 {
-		return source
-	}
-
-	next, ok := source[key[0]]
-	if ok {
-		if len(key) == 1 {
-			return next
-		}
-
-		// Nested case
-		switch next.(type) {
-		case map[interface{}]interface{}:
-			return f.lookup(cast.ToStringMap(next), key[1:])
-		case map[string]interface{}:
-			return f.lookup(next.(map[string]interface{}), key[1:])
-		default:
-			return nil
-		}
-	}
-	return nil
 }
