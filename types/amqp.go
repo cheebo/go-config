@@ -1,7 +1,7 @@
 package types
 
 type AMQPConfig struct {
-	URL          string `json:"url" default:"amqp://guest:guest@localhost:5672/"`
+	URL          string `json:"url"`
 	Exchange     string `json:"exchange"`
 	Queue        string `json:"queue"`
 	Kind         string `json:"kind"`
