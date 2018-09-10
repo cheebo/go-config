@@ -31,7 +31,9 @@ func ReadConfig(in io.Reader, ct ConfigType, c map[string]interface{}) error {
 
 	switch ct {
 	case JSON:
-		if err := json.Unmarshal(buf.Bytes(), &c); err != nil {
+		decoder := json.NewDecoder(buf)
+		decoder.UseNumber()
+		if err := decoder.Decode(&c); err != nil {
 			return ConfigParseError{err}
 		}
 	case YAML:

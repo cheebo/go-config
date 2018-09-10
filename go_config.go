@@ -72,27 +72,48 @@ func (gc *config) Bool(key string) bool {
 }
 
 func (gc *config) Float(key string) float64 {
-	val := gc.Get(key)
-	if val == nil {
-		return 0
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Float(key)
+		if err != nil {
+			continue
+		}
+		value = val
 	}
-	return val.(float64)
+	if value == nil {
+		value = Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return value.(float64)
 }
 
 func (gc *config) Int(key string) int {
-	val := gc.Get(key)
-	if val == nil {
-		return 0
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Int(key)
+		if err != nil {
+			continue
+		}
+		value = val
 	}
-	return val.(int)
+	if value == nil {
+		value = Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return value.(int)
 }
 
 func (gc *config) UInt(key string) uint {
-	val := gc.Get(key)
-	if val == nil {
-		return 0
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.UInt(key)
+		if err != nil {
+			continue
+		}
+		value = val
 	}
-	return val.(uint)
+	if value == nil {
+		value = Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return value.(uint)
 }
 
 func (gc *config) Slice(key, delimiter string) []interface{} {

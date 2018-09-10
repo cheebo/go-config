@@ -2,6 +2,7 @@ package file
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/cheebo/go-config"
 	"github.com/spf13/cast"
 	"io/ioutil"
@@ -61,7 +62,17 @@ func (f *file) Float(key string) (float64, error) {
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
-	return cast.ToFloat64E(val)
+
+	var v interface{}
+	switch val.(type) {
+	case json.Number:
+		v = val.(json.Number).String()
+		break
+	default:
+		v = val
+	}
+
+	return cast.ToFloat64E(v)
 }
 
 func (f *file) Int(key string) (int, error) {
@@ -69,7 +80,17 @@ func (f *file) Int(key string) (int, error) {
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
-	return cast.ToIntE(val)
+
+	var v interface{}
+	switch val.(type) {
+	case json.Number:
+		v = val.(json.Number).String()
+		break
+	default:
+		v = val
+	}
+
+	return cast.ToIntE(v)
 }
 
 func (f *file) UInt(key string) (uint, error) {
@@ -77,7 +98,17 @@ func (f *file) UInt(key string) (uint, error) {
 	if val == nil {
 		return 0, go_config.NoVariablesInitialised
 	}
-	return cast.ToUintE(val)
+
+	var v interface{}
+	switch val.(type) {
+	case json.Number:
+		v = val.(json.Number).String()
+		break
+	default:
+		v = val
+	}
+
+	return cast.ToUintE(v)
 }
 
 func (f *file) Slice(key, delimiter string) ([]interface{}, error) {
