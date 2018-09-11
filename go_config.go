@@ -82,6 +82,9 @@ func (gc *config) Float(key string) float64 {
 	}
 	if value == nil {
 		value = Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
 	}
 	return value.(float64)
 }
@@ -97,6 +100,9 @@ func (gc *config) Int(key string) int {
 	}
 	if value == nil {
 		value = Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
 	}
 	return value.(int)
 }
@@ -112,6 +118,9 @@ func (gc *config) UInt(key string) uint {
 	}
 	if value == nil {
 		value = Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
 	}
 	return value.(uint)
 }
