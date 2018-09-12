@@ -138,7 +138,11 @@ func (gc *config) String(key string) string {
 	if val == nil {
 		return ""
 	}
-	return val.(string)
+	v, ok := val.(string)
+	if !ok {
+		return ""
+	}
+	return v
 }
 
 func (gc *config) StringMap(key string) map[string]interface{} {
