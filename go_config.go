@@ -127,10 +127,7 @@ func (gc *config) UInt(key string) uint {
 
 func (gc *config) Slice(key, delimiter string) []interface{} {
 	val := gc.Get(key)
-	if val == nil {
-		return []interface{}{}
-	}
-	return val.([]interface{})
+	return cast.ToSlice(val)
 }
 
 func (gc *config) String(key string) string {
