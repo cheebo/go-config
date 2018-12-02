@@ -126,8 +126,18 @@ func (gc *config) UInt(key string) uint {
 }
 
 func (gc *config) Slice(key, delimiter string) []interface{} {
-	val := gc.Get(key)
-	return cast.ToSlice(val)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Slice(key, delimiter)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return cast.ToSlice(value)
 }
 
 func (gc *config) String(key string) string {

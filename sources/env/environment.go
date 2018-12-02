@@ -2,7 +2,6 @@ package env
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/spf13/cast"
 	"os"
 	"strconv"
 	"strings"
@@ -71,7 +70,11 @@ func (e *env) Slice(key, delimiter string) ([]interface{}, error) {
 	if !ok {
 		return []interface{}{}, go_config.NoVariablesInitialised
 	}
-	return cast.ToSliceE(strings.Split(val, delimiter))
+	var slice []interface{}
+	for _, s := range strings.Split(val, delimiter) {
+		slice = append(slice, s)
+	}
+	return slice, nil
 }
 
 func (e *env) String(key string) (string, error) {
