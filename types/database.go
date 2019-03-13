@@ -1,9 +1,9 @@
 package types
 
-import "github.com/pkg/errors"
+import "errors"
 
 var (
-	ErrUnsupportedDriver = errors.New("Unsupported database driver")
+	ErrUnsupportedDriver = errors.New("unsupported database driver")
 )
 
 type DatabaseConfig struct {

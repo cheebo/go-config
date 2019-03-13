@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/consul/api"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-	"reflect"
 	"strings"
 )
 
