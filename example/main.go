@@ -5,25 +5,28 @@ import (
 	"github.com/cheebo/go-config/sources/env"
 	"github.com/cheebo/go-config/sources/file"
 	"github.com/cheebo/go-config/types"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
 	cfg := go_config.New()
-	fs, err := file.Source(file.File{"./fixtures/config.json", go_config.JSON, ""})
+	fileSource, err := file.Source(file.File{"./fixtures/config.json", go_config.JSON, ""})
 	if err != nil {
 		panic(err)
 	}
-	cfg.UseSource(env.Source("GO"), env.Source(""), fs)
+	cfg.UseSource(env.Source("GO"), env.Source(""), fileSource)
 
-	//fmt.Println(cfg.Get("name"), cfg.IsSet("name"))
-	//fmt.Println(cfg.Get("age"), cfg.IsSet("age"))
-	//fmt.Println(cfg.Get("amqp.url"), cfg.IsSet("amqp.url"))
-	//fmt.Println(cfg.Get("amqp.addr"), cfg.IsSet("amqp.addr"))
-	m := types.AMQPConfig{}
-	err = cfg.Unmarshal(&m, "amqp")
+	amqp := types.AMQPConfig{}
+	err = cfg.Unmarshal(&amqp, "amqp")
 	if err != nil {
 		println(err.Error())
 	}
-	spew.Dump(m)
+
+	sub := cfg.Sub("amqp")
+	println(sub.String("url"))
+
+	println(cfg.String("GOPATH"))
+
+	sub = cfg.Sub("tree.root")
+	s := sub.Sub("branch")
+	println(s.String("key"))
 }

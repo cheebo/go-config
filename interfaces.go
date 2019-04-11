@@ -1,11 +1,15 @@
 package go_config
 
 type Config interface {
+	Fields
+
 	UseSource(sources ...Source)
 	Unmarshal(v interface{}, prefix string) error
 
 	SetDefault(key string, val interface{})
+}
 
+type Fields interface {
 	Get(key string) interface{}
 
 	Bool(key string) bool
@@ -15,6 +19,8 @@ type Config interface {
 	Slice(key, delimiter string) []interface{}
 	String(key string) string
 	StringMap(key string) map[string]interface{}
+
+	Sub(key string) Fields
 
 	IsSet(key string) bool
 }

@@ -8,8 +8,10 @@ import (
 )
 
 type config struct {
+	sub string
 	sources  []Source
 	defaults map[string]interface{}
+	config map[string]interface{}
 }
 
 var (
@@ -18,9 +20,14 @@ var (
 )
 
 func New() Config {
+	return newConfig("", []Source{}, map[string]interface{}{})
+}
+
+func newConfig(sub string, sources []Source, defaults map[string]interface{}) Config {
 	return &config{
-		sources:  []Source{},
-		defaults: map[string]interface{}{},
+		sub: sub,
+		sources:  sources,
+		defaults: defaults,
 	}
 }
 
@@ -49,6 +56,9 @@ func (gc *config) SetDefault(key string, val interface{}) {
 }
 
 func (gc *config) Get(key string) interface{} {
+	if len(gc.sub) > 0 {
+		key = gc.sub + "." + key
+	}
 	var value interface{}
 	for _, src := range gc.sources {
 		val := src.Get(key)
@@ -123,6 +133,14 @@ func (gc *config) UInt(key string) uint {
 		}
 	}
 	return value.(uint)
+}
+
+func (gc *config) Sub(key string) Fields {
+	if len(gc.sub) > 0 {
+		key = gc.sub + "." + key
+	}
+	c := newConfig(key, gc.sources, gc.defaults)
+	return c
 }
 
 func (gc *config) Slice(key, delimiter string) []interface{} {

@@ -11,5 +11,12 @@
   },
   "nodes": ["10.8.0.1","10.8.0.2"],
   "name": "John Doe",
-  "age": 30
+  "age": 30,
+  "tree": {
+    "root": {
+      "branch": {
+        "key": "value"
+      }
+    }
+  }
 }
