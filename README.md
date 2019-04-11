@@ -1,4 +1,6 @@
 # Go Config
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcheebo%2Fgo-config.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcheebo%2Fgo-config?ref=badge_shield)
+
 
 Package provides routines that loads configuration into provided structure from provided sources.
 
@@ -54,3 +56,6 @@ Supported config sources:
   - yaml
   - toml
 - consul
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcheebo%2Fgo-config.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcheebo%2Fgo-config?ref=badge_large)
