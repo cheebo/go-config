@@ -4,25 +4,21 @@ type Config interface {
 	Fields
 
 	UseSource(sources ...Source)
-	Unmarshal(v interface{}, prefix string) error
-
 	SetDefault(key string, val interface{})
 }
 
 type Fields interface {
-	Get(key string) interface{}
-
 	Bool(key string) bool
+	Get(key string) interface{}
 	Float(key string) float64
 	Int(key string) int
-	UInt(key string) uint
+	IsSet(key string) bool
 	Slice(key, delimiter string) []interface{}
 	String(key string) string
 	StringMap(key string) map[string]interface{}
-
 	Sub(key string) Fields
-
-	IsSet(key string) bool
+	UInt(key string) uint
+	Unmarshal(v interface{}, prefix string) error
 }
 
 type Source interface {
