@@ -27,7 +27,10 @@ func (pe ConfigParseError) Error() string {
 
 func ReadConfig(in io.Reader, ct ConfigType, c map[string]interface{}) error {
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(in)
+	_, err := buf.ReadFrom(in)
+	if err != nil {
+		return err
+	}
 
 	switch ct {
 	case JSON:
