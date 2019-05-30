@@ -3,7 +3,6 @@ package go_config_test
 import (
 	"bytes"
 	goconfig "github.com/cheebo/go-config"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -27,8 +26,6 @@ db:
 	err := goconfig.ReadConfig(bytes.NewBuffer(yamlExample), goconfig.YAML, cfg)
 
 	assert.NoError(err)
-
-	spew.Dump(cfg)
 }
 
 func TestReadConfig_JSON(t *testing.T) {
@@ -48,8 +45,6 @@ func TestReadConfig_JSON(t *testing.T) {
 	err := goconfig.ReadConfig(bytes.NewBuffer(jsonExample), goconfig.JSON, cfg)
 
 	assert.NoError(err)
-
-	spew.Dump(cfg)
 }
 
 func TestReadConfig_TOML(t *testing.T) {
@@ -68,6 +63,4 @@ port = 3306
 	err := goconfig.ReadConfig(bytes.NewBuffer(jsonExample), goconfig.TOML, cfg)
 
 	assert.NoError(err)
-
-	spew.Dump(cfg)
 }
