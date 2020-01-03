@@ -4,8 +4,18 @@ import (
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/sources/env"
 	"github.com/cheebo/go-config/sources/file"
-	"github.com/cheebo/go-config/types"
 )
+
+type AMQPConfig struct {
+	URL          string `json:"url"`
+	Exchange     string `json:"exchange"`
+	Queue        string `json:"queue"`
+	Kind         string `json:"kind"`
+	Key          string `json:"key"`
+	Durable      bool   `json:"durable"`
+	AutoDelete   bool   `json:"auto_delete"`
+	DeliveryMode uint   `json:"delivery_mode"`
+}
 
 func main() {
 	cfg := go_config.New()
@@ -15,7 +25,7 @@ func main() {
 	}
 	cfg.UseSource(env.Source("GO"), env.Source(""), fileSource)
 
-	amqp := types.AMQPConfig{}
+	amqp := AMQPConfig{}
 	err = cfg.Unmarshal(&amqp, "amqp")
 	if err != nil {
 		println(err.Error())

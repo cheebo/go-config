@@ -3,14 +3,24 @@ package file_test
 import (
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/sources/file"
-	"github.com/cheebo/go-config/types"
 	"github.com/stretchr/testify/assert"
 
 	"testing"
 )
 
+type AMQPConfig struct {
+	URL          string `json:"url"`
+	Exchange     string `json:"exchange"`
+	Queue        string `json:"queue"`
+	Kind         string `json:"kind"`
+	Key          string `json:"key"`
+	Durable      bool   `json:"durable"`
+	AutoDelete   bool   `json:"auto_delete"`
+	DeliveryMode uint   `json:"delivery_mode"`
+}
+
 type Config struct {
-	AMQP types.AMQPConfig `cfg:"amqp"`
+	AMQP AMQPConfig `cfg:"amqp"`
 }
 
 func TestJsonFileSource(t *testing.T) {

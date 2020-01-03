@@ -3,14 +3,24 @@ package consul_test
 import (
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/sources/consul"
-	"github.com/cheebo/go-config/types"
 	"github.com/stretchr/testify/assert"
 
 	"testing"
 )
 
-type ConfigConsul struct {
-	AMQP types.AMQPConfig `cfg:"amqp" consul:"/test/amqp"`
+type AMQPConfig struct {
+	URL          string `json:"url"`
+	Exchange     string `json:"exchange"`
+	Queue        string `json:"queue"`
+	Kind         string `json:"kind"`
+	Key          string `json:"key"`
+	Durable      bool   `json:"durable"`
+	AutoDelete   bool   `json:"auto_delete"`
+	DeliveryMode uint   `json:"delivery_mode"`
+}
+
+type Config struct {
+	AMQP AMQPConfig `cfg:"amqp" consul:"/test/amqp"`
 }
 
 type ConfigRsaKey struct {
@@ -19,13 +29,17 @@ type ConfigRsaKey struct {
 
 func TestConsulSource(t *testing.T) {
 	assert := assert.New(t)
-	cfg := ConfigConsul{}
+	cfg := Config{}
 	c := go_config.New()
-	c.Use(consul.Source("/s2w", types.ConsulConfig{
-		Addr: "localhost:8500", Scheme: "http",
-	}))
-	err := c.Configure(&cfg)
 
+	src, err := consul.Source(consul.ConsulConfig{
+		Addr: "localhost:8500", Scheme: "http",
+	})
+	assert.NoError(err)
+
+	c.UseSource(src)
+
+	err = c.Unmarshal(cfg, "amqp")
 	assert.NoError(err)
 
 	assert.Equal("localhost", cfg.AMQP.URL)
@@ -42,14 +56,16 @@ func TestConsulSource2(t *testing.T) {
 	assert := assert.New(t)
 	cfg := ConfigRsaKey{}
 	c := go_config.New()
-	c.Use(consul.Source("/s2w", types.ConsulConfig{
-		Addr: "localhost:8500", Scheme: "http",
-	}))
-	err := c.Configure(&cfg)
 
+	src, err := consul.Source(consul.ConsulConfig{
+		Addr: "localhost:8500", Scheme: "http",
+	})
 	assert.NoError(err)
 
-	println(cfg.Key)
+	c.UseSource(src)
+	err = c.Unmarshal(&cfg, "rsa.public")
+
+	assert.NoError(err)
 
 	assert.Equal("RSA PUBLIC KEY", cfg.Key)
 }

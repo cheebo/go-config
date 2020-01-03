@@ -2,11 +2,8 @@ package consul
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/types"
 	"github.com/hashicorp/consul/api"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"strings"
 )
@@ -19,11 +16,11 @@ type Consul struct {
 
 type consul struct {
 	prefix string
-	config types.ConsulConfig
+	config ConsulConfig
 	data   map[string]interface{}
 }
 
-func Source(log *logrus.Logger, config types.ConsulConfig, dataSource ...Consul) (go_config.Source, error) {
+func Source(config ConsulConfig, dataSource ...Consul) (go_config.Source, error) {
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {
 		return nil, err
@@ -39,24 +36,24 @@ func Source(log *logrus.Logger, config types.ConsulConfig, dataSource ...Consul)
 		}
 		kvpair, _, err := client.KV().Get(ds.Path, q)
 		if err != nil {
-			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't read config from %s err: %s", ds.Path, err.Error()))
+			// todo: return or log error
 			continue
 		}
 		if kvpair == nil {
-			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't read config from %s", ds.Path))
+			// todo: return or log error
 			continue
 		}
 
 		m := map[string]interface{}{}
 		err = go_config.ReadConfig(bytes.NewBuffer([]byte(strings.TrimSpace(string(kvpair.Value)))), ds.Type, m)
 		if err != nil {
-			log.WithField("component", "go-config.consul.Source").Error(fmt.Sprintf("Can't parse config from %s type %s", ds.Path, ds.Type))
+			// todo: return or log error
 			continue
 		}
 
 		err = go_config.MergeMapWithPath(data, m, strings.Split(ds.Namespace, "."))
 		if err != nil {
-			log.Error(err)
+			// todo: return or log error
 		}
 	}
 
