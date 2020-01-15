@@ -3,7 +3,9 @@ package file
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
+	"path"
 	"strings"
 
 	"github.com/cheebo/go-config"
@@ -14,7 +16,6 @@ import (
 
 type File struct {
 	Path      string
-	Type      reader.ConfigType
 	Namespace string
 }
 
@@ -33,8 +34,22 @@ func Source(fs ...File) (go_config.Source, error) {
 			return nil, err
 		}
 
+		var cfgType reader.ConfigType
+		switch ext := strings.ToLower(path.Ext(f.Path)); ext {
+		case "json":
+			cfgType = reader.JSON
+		case "toml":
+			cfgType = reader.TOML
+		case "yaml":
+			fallthrough
+		case "yml":
+			cfgType = reader.YAML
+		default:
+			return nil, errors.New("unsupported file extensions: " + ext)
+		}
+
 		m := map[string]interface{}{}
-		err = reader.ReadConfig(bytes.NewBuffer(data), f.Type, m)
+		err = reader.ReadConfig(bytes.NewBuffer(data), cfgType, m)
 		if err != nil {
 			return nil, err
 		}
