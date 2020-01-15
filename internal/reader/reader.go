@@ -1,12 +1,13 @@
-package go_config
+package reader
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+
 	toml "github.com/pelletier/go-toml"
 	yaml "gopkg.in/yaml.v2"
-	"io"
 )
 
 type ConfigType int

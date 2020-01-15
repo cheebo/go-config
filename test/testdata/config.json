@@ -1,7 +1,7 @@
 {
   "amqp": {
     "url": "localhost",
-    "exchange": "exch",
+    "exchange": "exchange",
     "queue": "que",
     "kind": "knd",
     "key": "k",

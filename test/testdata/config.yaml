@@ -1,0 +1,18 @@
+amqp:
+  url: "localhost",
+  exchange: "exchange",
+  queue: "que",
+  kind: "knd",
+  key: "k",
+  durable: true,
+  autodelete: true,
+  deliverymode: 2
+nodes:
+  - "10.8.0.1"
+  - "10.8.0.2"
+name: "John Doe",
+age: 30,
+tree:
+  root:
+    branch:
+      key: "value"

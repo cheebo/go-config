@@ -2,6 +2,7 @@ package file_test
 
 import (
 	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/internal/reader"
 	"github.com/cheebo/go-config/sources/file"
 	"github.com/stretchr/testify/assert"
 
@@ -20,14 +21,14 @@ type AMQPConfig struct {
 }
 
 type Config struct {
-	AMQP AMQPConfig `cfg:"amqp"`
+	AMQP AMQPConfig
 }
 
 func TestJsonFileSource(t *testing.T) {
 	assert := assert.New(t)
 	cfg := Config{}
 	c := go_config.New()
-	fileSource, err := file.Source(file.File{Path: "./fixtures/config.json", Type: go_config.JSON, Namespace: ""})
+	fileSource, err := file.Source(file.File{Path: "./fixtures/config.json", Type: reader.JSON, Namespace: ""})
 	assert.NoError(err)
 
 	c.UseSource(fileSource)

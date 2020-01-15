@@ -1,9 +1,10 @@
-package go_config
+package utils
 
 import (
 	"github.com/spf13/cast"
 )
 
+// MergeMapWithPath merges sub into source, result in source
 func MergeMapWithPath(source map[string]interface{}, sub map[string]interface{}, path []string) error {
 	if len(path) == 0 || (len(path) == 1 && path[0] == "") {
 		for k, v := range sub {

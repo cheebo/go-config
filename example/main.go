@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/internal/reader"
 	"github.com/cheebo/go-config/sources/env"
 	"github.com/cheebo/go-config/sources/file"
 )
@@ -19,7 +20,7 @@ type AMQPConfig struct {
 
 func main() {
 	cfg := go_config.New()
-	fileSource, err := file.Source(file.File{"./fixtures/config.json", go_config.JSON, ""})
+	fileSource, err := file.Source(file.File{"./fixtures/config.json", reader.JSON, ""})
 	if err != nil {
 		panic(err)
 	}
