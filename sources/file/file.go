@@ -219,7 +219,7 @@ func (f *file) UInt64(key string) (uint64, error) {
 	return cast.ToUint64E(v)
 }
 
-func (f *file) Slice(key, delimiter string) ([]interface{}, error) {
+func (f *file) Slice(key string) ([]interface{}, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
 		return []interface{}{}, go_config.NoVariablesInitialised

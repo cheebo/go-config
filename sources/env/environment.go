@@ -105,13 +105,13 @@ func (e *env) UInt64(key string) (uint64, error) {
 	return cast.ToUint64E(v)
 }
 
-func (e *env) Slice(key, delimiter string) ([]interface{}, error) {
+func (e *env) Slice(key string) ([]interface{}, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
 		return []interface{}{}, go_config.NoVariablesInitialised
 	}
 	var slice []interface{}
-	for _, s := range strings.Split(val, delimiter) {
+	for _, s := range strings.Split(val, e.delimiter) {
 		slice = append(slice, s)
 	}
 	return slice, nil
