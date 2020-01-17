@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/internal/reader"
 	"github.com/cheebo/go-config/sources/env"
 	"github.com/cheebo/go-config/sources/file"
 )
@@ -20,11 +19,11 @@ type AMQPConfig struct {
 
 func main() {
 	cfg := go_config.New()
-	fileSource, err := file.Source(file.File{"./fixtures/config.json", reader.JSON, ""})
+	fileSource, err := file.Source(file.File{"./fixtures/config.json", ""})
 	if err != nil {
 		panic(err)
 	}
-	cfg.UseSource(env.Source("GO"), env.Source(""), fileSource)
+	cfg.UseSource(env.Source("GO", ","), env.Source("", ","), fileSource)
 
 	amqp := AMQPConfig{}
 	err = cfg.Unmarshal(&amqp, "amqp")
