@@ -180,7 +180,64 @@ func (gc *config) Int(key string) int {
 			return 0
 		}
 	}
-	return value.(int)
+	return cast.ToInt(value)
+}
+
+func (gc *config) Int8(key string) int8 {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Int8(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
+	}
+	return cast.ToInt8(value)
+}
+
+func (gc *config) Int32(key string) int32 {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Int32(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
+	}
+	return cast.ToInt32(value)
+}
+
+func (gc *config) Int64(key string) int64 {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Int64(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
+	}
+	return cast.ToInt64(value)
 }
 
 func (gc *config) UInt(key string) uint {
@@ -202,17 +259,55 @@ func (gc *config) UInt(key string) uint {
 	return value.(uint)
 }
 
+func (gc *config) UInt32(key string) uint32 {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.UInt32(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
+	}
+	return cast.ToUint32(value)
+}
+
+func (gc *config) UInt64(key string) uint64 {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.UInt64(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return 0
+		}
+	}
+	return cast.ToUint64(value)
+}
+
 func (gc *config) Sub(key string) Fields {
 	key = nestedKey(gc.sub, key)
 	c := newConfig(key, gc.sources, gc.defaults)
 	return c
 }
 
-func (gc *config) Slice(key, delimiter string) []interface{} {
+func (gc *config) Slice(key string) []interface{} {
 	key = nestedKey(gc.sub, key)
 	var value interface{}
 	for _, src := range gc.sources {
-		val, err := src.Slice(key, delimiter)
+		val, err := src.Slice(key)
 		if err != nil {
 			continue
 		}
@@ -222,6 +317,38 @@ func (gc *config) Slice(key, delimiter string) []interface{} {
 		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
 	}
 	return cast.ToSlice(value)
+}
+
+func (gc *config) SliceInt(key string) []int {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.SliceInt(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return cast.ToIntSlice(value)
+}
+
+func (gc *config) SliceString(key string) []string {
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.SliceString(key)
+		if err != nil {
+			continue
+		}
+		value = val
+	}
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+	}
+	return cast.ToStringSlice(value)
 }
 
 func (gc *config) String(key string) string {
@@ -241,7 +368,31 @@ func (gc *config) StringMap(key string) map[string]interface{} {
 	if val == nil {
 		return map[string]interface{}{}
 	}
-	return val.(map[string]interface{})
+	return cast.ToStringMap(val)
+}
+
+func (gc *config) StringMapInt(key string) map[string]int {
+	val := gc.Get(key)
+	if val == nil {
+		return map[string]int{}
+	}
+	return cast.ToStringMapInt(val)
+}
+
+func (gc *config) StringMapSliceString(key string) map[string][]string {
+	val := gc.Get(key)
+	if val == nil {
+		return map[string][]string{}
+	}
+	return cast.ToStringMapStringSlice(val)
+}
+
+func (gc *config) StringMapString(key string) map[string]string {
+	val := gc.Get(key)
+	if val == nil {
+		return map[string]string{}
+	}
+	return cast.ToStringMapString(val)
 }
 
 func (gc *config) IsSet(key string) bool {

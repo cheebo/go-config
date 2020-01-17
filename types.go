@@ -45,8 +45,9 @@ type (
 		Int8(key string) (int8, error)
 		Int32(key string) (int32, error)
 		Int64(key string) (int64, error)
-		SliceString(key string) ([]string, error)
+		Slice(key string) ([]interface{}, error)
 		SliceInt(key string) ([]int, error)
+		SliceString(key string) ([]string, error)
 		String(key string) (string, error)
 		StringMap(key string) map[string]interface{}
 		StringMapInt(key string) map[string]int
