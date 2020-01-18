@@ -134,11 +134,11 @@ func (e *env) SliceString(key string) ([]string, error) {
 	if !ok {
 		return []string{}, go_config.NoVariablesInitialised
 	}
-	var slice []interface{}
+	var slice []string
 	for _, s := range strings.Split(val, e.delimiter) {
 		slice = append(slice, s)
 	}
-	return cast.ToStringSliceE(slice)
+	return slice, nil
 }
 
 func (e *env) String(key string) (string, error) {
