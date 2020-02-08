@@ -19,7 +19,7 @@ type AMQPConfig struct {
 
 func main() {
 	cfg := go_config.New()
-	fileSource, err := file.Source(file.File{"./fixtures/config.json", ""})
+	fileSource, err := file.Source(file.File{"testdata/config.json", ""})
 	if err != nil {
 		panic(err)
 	}
@@ -33,8 +33,6 @@ func main() {
 
 	sub := cfg.Sub("amqp")
 	println(sub.String("url"))
-
-	println(cfg.String("GOPATH"))
 
 	sub = cfg.Sub("tree.root")
 	s := sub.Sub("branch")

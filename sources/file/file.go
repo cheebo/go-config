@@ -36,13 +36,13 @@ func Source(fs ...File) (go_config.Source, error) {
 
 		var cfgType reader.ConfigType
 		switch ext := strings.ToLower(path.Ext(f.Path)); ext {
-		case "json":
+		case ".json":
 			cfgType = reader.JSON
-		case "toml":
+		case ".toml":
 			cfgType = reader.TOML
-		case "yaml":
+		case ".yaml":
 			fallthrough
-		case "yml":
+		case ".yml":
 			cfgType = reader.YAML
 		default:
 			return nil, errors.New("unsupported file extensions: " + ext)
