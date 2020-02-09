@@ -36,7 +36,12 @@ func newConfig(sub string, sources []Source, defaults map[string]interface{}) Co
 }
 
 func (gc *config) UseSource(sources ...Source) {
-	gc.sources = append(gc.sources, sources...)
+	for _, s := range sources {
+		if s == nil {
+			continue
+		}
+		gc.sources = append(gc.sources, s)
+	}
 }
 
 func (gc *config) Unmarshal(v interface{}, prefix string) error {
