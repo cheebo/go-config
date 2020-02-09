@@ -98,11 +98,31 @@ func (gc *config) Unmarshal(v interface{}, prefix string) error {
 		case reflect.String:
 			refField.SetString(cast.ToString(gc.Get(name)))
 		case reflect.Slice:
-			m := cast.ToSlice(gc.Get(name))
-			refField.Set(reflect.ValueOf(m))
+			switch refField.Type().Elem().Kind() {
+			case reflect.Int:
+				refField.Set(reflect.ValueOf(cast.ToIntSlice(gc.Get(name))))
+			case reflect.String:
+				refField.Set(reflect.ValueOf(cast.ToStringSlice(gc.Get(name))))
+			case reflect.Bool:
+				refField.Set(reflect.ValueOf(cast.ToBoolSlice(gc.Get(name))))
+			case reflect.Interface:
+				refField.Set(reflect.ValueOf(cast.ToSlice(gc.Get(name))))
+			}
 		case reflect.Map:
-			m := cast.ToStringMap(gc.Get(name))
-			refField.Set(reflect.ValueOf(m))
+			switch refField.Type().Elem().Kind() {
+			case reflect.Bool:
+				refField.Set(reflect.ValueOf(cast.ToStringMapBool(gc.Get(name))))
+			case reflect.Int:
+				refField.Set(reflect.ValueOf(cast.ToStringMapInt(gc.Get(name))))
+			case reflect.String:
+				refField.Set(reflect.ValueOf(cast.ToStringMapString(gc.Get(name))))
+			case reflect.Interface:
+				refField.Set(reflect.ValueOf(cast.ToStringMap(gc.Get(name))))
+			case reflect.Slice:
+				if refField.Type().Elem().Elem().Kind() == reflect.String {
+					refField.Set(reflect.ValueOf(cast.ToStringMapStringSlice(gc.Get(name))))
+				}
+			}
 		}
 
 	}

@@ -33,7 +33,7 @@ func TestGoConfig_GetTypes(t *testing.T) {
 	a.Equal(Int, cfg.Int("int"))
 	a.Equal(UInt, cfg.UInt("uint"))
 	a.Equal(Bool, cfg.Bool("bool"))
-	a.Equal(Slice, cfg.Slice("slice", ""))
+	a.Equal(Slice, cfg.Slice("slice"))
 	a.Equal(Map, cfg.StringMap("map"))
 }
 
@@ -65,7 +65,7 @@ func TestGoConfig_Sub(t *testing.T) {
 	a.Equal(Int, sub.Int("int"))
 	a.Equal(UInt, sub.UInt("uint"))
 	a.Equal(Bool, sub.Bool("bool"))
-	a.Equal(Slice, sub.Slice("slice", ""))
+	a.Equal(Slice, sub.Slice("slice"))
 	a.Equal(Map, sub.StringMap("map"))
 }
 
@@ -111,6 +111,23 @@ func TestGoConfig_Unmarshal(t *testing.T) {
 		zip  = 10118
 	)
 
+	var (
+		edu  = []string{"school", "bachelor", "master", "phd"}
+		exp  = []int{1, 2, 10, 20}
+		jobs = map[string]string{
+			"Acme Corp": "Manager",
+			"Acme LLC":  "Manager",
+		}
+		jobExp = map[string]int{
+			"acme corp":     3,
+			"home business": 1,
+		}
+		business = map[string][]string{
+			"owner":    []string{"home business", "first business"},
+			"co-owner": []string{"second corp"},
+		}
+	)
+
 	type person struct {
 		Name    string
 		Age     int
@@ -118,6 +135,13 @@ func TestGoConfig_Unmarshal(t *testing.T) {
 			City string
 			Zip  int
 		}
+		Jobs       map[string]string
+		JobExp     map[string]int
+		Business   map[string][]string
+		Business2  map[string]interface{}
+		Education  []string
+		Experience []int
+		Travel     []interface{}
 	}
 
 	cfg := go_config.New()
@@ -125,6 +149,13 @@ func TestGoConfig_Unmarshal(t *testing.T) {
 	cfg.SetDefault("person.age", age)
 	cfg.SetDefault("person.address.city", city)
 	cfg.SetDefault("person.address.zip", zip)
+	cfg.SetDefault("person.education", edu)
+	cfg.SetDefault("person.experience", exp)
+	cfg.SetDefault("person.travel", edu)
+	cfg.SetDefault("person.jobs", jobs)
+	cfg.SetDefault("person.jobexp", jobExp)
+	cfg.SetDefault("person.business", business)
+	cfg.SetDefault("person.business2", business)
 
 	p := person{}
 
@@ -134,4 +165,18 @@ func TestGoConfig_Unmarshal(t *testing.T) {
 	a.Equal(age, p.Age)
 	a.Equal(city, p.Address.City)
 	a.Equal(zip, p.Address.Zip)
+	a.Equal(edu, p.Education)
+	a.Equal(exp, p.Experience)
+	a.Equal(jobs, p.Jobs)
+	a.Equal(business, p.Business)
+	a.Equal(map[string]interface{}{}, p.Business2)
+	a.Equal(jobExp, p.JobExp)
+}
+
+func TestGoConfig_GetUnset(t *testing.T) {
+	a := assert.New(t)
+
+	cfg := go_config.New()
+	v := cfg.Get("unset")
+	a.Nil(v)
 }
