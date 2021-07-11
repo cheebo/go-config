@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cheebo/go-config"
+	"github.com/cheebo/go-config/pkg/errors"
 	"github.com/spf13/cast"
 )
 
@@ -32,7 +33,7 @@ func (e *env) Get(key string) interface{} {
 func (e *env) Bool(key string) (bool, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return false, go_config.NoVariablesInitialised
+		return false, errors.NoVariablesInitialised
 	}
 	return strconv.ParseBool(val)
 }
@@ -40,7 +41,7 @@ func (e *env) Bool(key string) (bool, error) {
 func (e *env) Int(key string) (int, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return strconv.Atoi(val)
 }
@@ -48,7 +49,7 @@ func (e *env) Int(key string) (int, error) {
 func (e *env) Int8(key string) (int8, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToInt8E(val)
 }
@@ -56,7 +57,7 @@ func (e *env) Int8(key string) (int8, error) {
 func (e *env) Int32(key string) (int32, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToInt32E(val)
 }
@@ -64,7 +65,7 @@ func (e *env) Int32(key string) (int32, error) {
 func (e *env) Int64(key string) (int64, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToInt64E(val)
 }
@@ -72,7 +73,7 @@ func (e *env) Int64(key string) (int64, error) {
 func (e *env) Float(key string) (float64, error) {
 	v, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	val, err := strconv.ParseFloat(v, 64)
 	if err != nil {
@@ -84,7 +85,7 @@ func (e *env) Float(key string) (float64, error) {
 func (e *env) UInt(key string) (uint, error) {
 	v, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToUintE(v)
 }
@@ -92,7 +93,7 @@ func (e *env) UInt(key string) (uint, error) {
 func (e *env) UInt32(key string) (uint32, error) {
 	v, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToUint32E(v)
 }
@@ -100,7 +101,7 @@ func (e *env) UInt32(key string) (uint32, error) {
 func (e *env) UInt64(key string) (uint64, error) {
 	v, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 	return cast.ToUint64E(v)
 }
@@ -108,7 +109,7 @@ func (e *env) UInt64(key string) (uint64, error) {
 func (e *env) Slice(key string) ([]interface{}, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return []interface{}{}, go_config.NoVariablesInitialised
+		return []interface{}{}, errors.NoVariablesInitialised
 	}
 	var slice []interface{}
 	for _, s := range strings.Split(val, e.delimiter) {
@@ -120,7 +121,7 @@ func (e *env) Slice(key string) ([]interface{}, error) {
 func (e *env) SliceInt(key string) ([]int, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return []int{}, go_config.NoVariablesInitialised
+		return []int{}, errors.NoVariablesInitialised
 	}
 	var slice []string
 	for _, s := range strings.Split(val, e.delimiter) {
@@ -132,7 +133,7 @@ func (e *env) SliceInt(key string) ([]int, error) {
 func (e *env) SliceString(key string) ([]string, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return []string{}, go_config.NoVariablesInitialised
+		return []string{}, errors.NoVariablesInitialised
 	}
 	var slice []string
 	for _, s := range strings.Split(val, e.delimiter) {
@@ -144,7 +145,7 @@ func (e *env) SliceString(key string) ([]string, error) {
 func (e *env) String(key string) (string, error) {
 	val, ok := os.LookupEnv(e.key(key))
 	if !ok {
-		return "", go_config.NoVariablesInitialised
+		return "", errors.NoVariablesInitialised
 	}
 	return val, nil
 }

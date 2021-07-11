@@ -3,7 +3,7 @@ package file
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
+	errors2 "errors"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -11,6 +11,7 @@ import (
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/internal/reader"
 	"github.com/cheebo/go-config/internal/utils"
+	"github.com/cheebo/go-config/pkg/errors"
 	"github.com/spf13/cast"
 )
 
@@ -45,7 +46,7 @@ func Source(fs ...File) (go_config.Source, error) {
 		case ".yml":
 			cfgType = reader.YAML
 		default:
-			return nil, errors.New("unsupported file extensions: " + ext)
+			return nil, errors2.New("unsupported file extensions: " + ext)
 		}
 
 		m := map[string]interface{}{}
@@ -70,7 +71,7 @@ func (f *file) Get(key string) interface{} {
 func (f *file) Bool(key string) (bool, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return false, go_config.NoVariablesInitialised
+		return false, errors.NoVariablesInitialised
 	}
 	return cast.ToBoolE(val)
 }
@@ -78,7 +79,7 @@ func (f *file) Bool(key string) (bool, error) {
 func (f *file) Float(key string) (float64, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -96,7 +97,7 @@ func (f *file) Float(key string) (float64, error) {
 func (f *file) Int(key string) (int, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -114,7 +115,7 @@ func (f *file) Int(key string) (int, error) {
 func (f *file) Int8(key string) (int8, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -132,7 +133,7 @@ func (f *file) Int8(key string) (int8, error) {
 func (f *file) Int32(key string) (int32, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -150,7 +151,7 @@ func (f *file) Int32(key string) (int32, error) {
 func (f *file) Int64(key string) (int64, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -168,7 +169,7 @@ func (f *file) Int64(key string) (int64, error) {
 func (f *file) UInt(key string) (uint, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -186,7 +187,7 @@ func (f *file) UInt(key string) (uint, error) {
 func (f *file) UInt32(key string) (uint32, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -204,7 +205,7 @@ func (f *file) UInt32(key string) (uint32, error) {
 func (f *file) UInt64(key string) (uint64, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.NoVariablesInitialised
 	}
 
 	var v interface{}
@@ -222,7 +223,7 @@ func (f *file) UInt64(key string) (uint64, error) {
 func (f *file) Slice(key string) ([]interface{}, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return []interface{}{}, go_config.NoVariablesInitialised
+		return []interface{}{}, errors.NoVariablesInitialised
 	}
 	return cast.ToSliceE(val)
 }
@@ -230,7 +231,7 @@ func (f *file) Slice(key string) ([]interface{}, error) {
 func (f *file) SliceInt(key string) ([]int, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return []int{}, go_config.NoVariablesInitialised
+		return []int{}, errors.NoVariablesInitialised
 	}
 	return cast.ToIntSliceE(val)
 }
@@ -238,7 +239,7 @@ func (f *file) SliceInt(key string) ([]int, error) {
 func (f *file) SliceString(key string) ([]string, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return []string{}, go_config.NoVariablesInitialised
+		return []string{}, errors.NoVariablesInitialised
 	}
 	return cast.ToStringSliceE(val)
 }
@@ -246,7 +247,7 @@ func (f *file) SliceString(key string) ([]string, error) {
 func (f *file) String(key string) (string, error) {
 	val := utils.Lookup(f.data, f.key(key))
 	if val == nil {
-		return "", go_config.NoVariablesInitialised
+		return "", errors.NoVariablesInitialised
 	}
 	return cast.ToStringE(val)
 }

@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cheebo/go-config/sources/env"
+	"github.com/cheebo/go-config/pkg/sources/env"
 	"github.com/stretchr/testify/assert"
 )
 

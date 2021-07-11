@@ -2,7 +2,7 @@ package consul_test
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/sources/consul"
+	"github.com/cheebo/go-config/pkg/sources/consul"
 	"github.com/stretchr/testify/assert"
 
 	"testing"

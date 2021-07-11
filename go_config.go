@@ -1,11 +1,11 @@
 package go_config
 
 import (
-	"errors"
 	"reflect"
 	"strings"
 
 	"github.com/cheebo/go-config/internal/utils"
+	"github.com/cheebo/go-config/pkg/errors"
 	utils2 "github.com/cheebo/go-config/pkg/utils"
 	"github.com/spf13/cast"
 )
@@ -16,12 +16,6 @@ type config struct {
 	defaults map[string]interface{}
 	config   map[string]interface{}
 }
-
-var (
-	NoVariablesInitialised = errors.New("no variables initialised")
-	NotAStructPtr          = errors.New("expects pointer to a struct")
-	NotAStruct             = errors.New("expects a struct")
-)
 
 func New() Config {
 	return newConfig("", []Source{}, map[string]interface{}{})
@@ -46,7 +40,7 @@ func (gc *config) UseSource(sources ...Source) {
 
 func (gc *config) Unmarshal(v interface{}, prefix string) error {
 	if t := reflect.TypeOf(v); t.Kind() != reflect.Ptr {
-		return NotAStructPtr
+		return errors.NotAStructPtr
 	}
 
 	refVal := reflect.ValueOf(v)
@@ -55,7 +49,7 @@ func (gc *config) Unmarshal(v interface{}, prefix string) error {
 	}
 
 	if refVal.Kind() != reflect.Struct {
-		return NotAStruct
+		return errors.NotAStruct
 	}
 
 	refType := reflect.TypeOf(v)
@@ -163,11 +157,22 @@ func (gc *config) Get(key string) interface{} {
 }
 
 func (gc *config) Bool(key string) bool {
-	val := gc.Get(key)
-	if val == nil {
-		return false
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.Bool(key)
+		if err != nil {
+			continue
+		}
+		value = val
 	}
-	return val.(bool)
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return false
+		}
+	}
+	return cast.ToBool(value)
 }
 
 func (gc *config) Float(key string) float64 {
@@ -186,7 +191,7 @@ func (gc *config) Float(key string) float64 {
 			return 0
 		}
 	}
-	return value.(float64)
+	return cast.ToFloat64(value)
 }
 
 func (gc *config) Int(key string) int {
@@ -281,7 +286,7 @@ func (gc *config) UInt(key string) uint {
 			return 0
 		}
 	}
-	return value.(uint)
+	return cast.ToUint(value)
 }
 
 func (gc *config) UInt32(key string) uint32 {
@@ -377,47 +382,86 @@ func (gc *config) SliceString(key string) []string {
 }
 
 func (gc *config) String(key string) string {
-	val := gc.Get(key)
-	if val == nil {
-		return ""
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val, err := src.String(key)
+		if err != nil {
+			continue
+		}
+		value = val
 	}
-	v, ok := val.(string)
-	if !ok {
-		return ""
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return ""
+		}
 	}
-	return v
+	return cast.ToString(value)
 }
 
 func (gc *config) StringMap(key string) map[string]interface{} {
-	val := gc.Get(key)
-	if val == nil {
-		return map[string]interface{}{}
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val := src.StringMap(key)
+		value = val
 	}
-	return cast.ToStringMap(val)
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return map[string]interface{}{}
+		}
+	}
+	return cast.ToStringMap(value)
 }
 
 func (gc *config) StringMapInt(key string) map[string]int {
-	val := gc.Get(key)
-	if val == nil {
-		return map[string]int{}
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val := src.StringMapInt(key)
+		value = val
 	}
-	return cast.ToStringMapInt(val)
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return map[string]int{}
+		}
+	}
+	return cast.ToStringMapInt(value)
 }
 
 func (gc *config) StringMapSliceString(key string) map[string][]string {
-	val := gc.Get(key)
-	if val == nil {
-		return map[string][]string{}
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val := src.StringMapSliceString(key)
+		value = val
 	}
-	return cast.ToStringMapStringSlice(val)
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return map[string][]string{}
+		}
+	}
+	return cast.ToStringMapStringSlice(value)
 }
 
 func (gc *config) StringMapString(key string) map[string]string {
-	val := gc.Get(key)
-	if val == nil {
-		return map[string]string{}
+	key = nestedKey(gc.sub, key)
+	var value interface{}
+	for _, src := range gc.sources {
+		val := src.StringMapString(key)
+		value = val
 	}
-	return cast.ToStringMapString(val)
+	if value == nil {
+		value = utils.Lookup(gc.defaults, strings.Split(key, "."))
+		if value == nil {
+			return map[string]string{}
+		}
+	}
+	return cast.ToStringMapString(value)
 }
 
 func (gc *config) IsSet(key string) bool {

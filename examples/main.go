@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/cheebo/go-config"
-	"github.com/cheebo/go-config/sources/env"
-	"github.com/cheebo/go-config/sources/file"
+	"github.com/cheebo/go-config/pkg/sources/env"
+	"github.com/cheebo/go-config/pkg/sources/file"
 )
 
 type AMQPConfig struct {
@@ -19,7 +19,7 @@ type AMQPConfig struct {
 
 func main() {
 	cfg := go_config.New()
-	fileSource, err := file.Source(file.File{"testdata/config.json", ""})
+	fileSource, err := file.Source(file.File{"/Users/sergey/Documents/development/sources/cheebo/go-config/test/testdata/config.json", ""})
 	if err != nil {
 		panic(err)
 	}
@@ -30,11 +30,12 @@ func main() {
 	if err != nil {
 		println(err.Error())
 	}
+	println(amqp.URL, amqp.Kind)
 
 	sub := cfg.Sub("amqp")
-	println(sub.String("url"))
+	println(sub.String("url"), sub.String("kind"))
 
 	sub = cfg.Sub("tree.root")
 	s := sub.Sub("branch")
-	println(s.String("key"))
+	println("tree.root.branch: ", s.String("key"))
 }

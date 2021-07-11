@@ -2,6 +2,7 @@ package consul
 
 import (
 	"bytes"
+	"errors"
 	"strings"
 
 	"github.com/cheebo/go-config"
@@ -73,7 +74,7 @@ func (c *consul) Get(key string) interface{} {
 func (c *consul) Bool(key string) (bool, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return false, go_config.NoVariablesInitialised
+		return false, errors.New("no variables initialized")
 	}
 	return cast.ToBoolE(val)
 }
@@ -81,7 +82,7 @@ func (c *consul) Bool(key string) (bool, error) {
 func (c *consul) Float(key string) (float64, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToFloat64E(val)
 }
@@ -89,7 +90,7 @@ func (c *consul) Float(key string) (float64, error) {
 func (c *consul) Int(key string) (int, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToIntE(val)
 }
@@ -97,7 +98,7 @@ func (c *consul) Int(key string) (int, error) {
 func (c *consul) Int8(key string) (int8, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToInt8E(val)
 }
@@ -105,7 +106,7 @@ func (c *consul) Int8(key string) (int8, error) {
 func (c *consul) Int32(key string) (int32, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToInt32E(val)
 }
@@ -113,7 +114,7 @@ func (c *consul) Int32(key string) (int32, error) {
 func (c *consul) Int64(key string) (int64, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToInt64E(val)
 }
@@ -121,7 +122,7 @@ func (c *consul) Int64(key string) (int64, error) {
 func (c *consul) UInt(key string) (uint, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToUintE(val)
 }
@@ -129,7 +130,7 @@ func (c *consul) UInt(key string) (uint, error) {
 func (c *consul) UInt32(key string) (uint32, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToUint32E(val)
 }
@@ -137,7 +138,7 @@ func (c *consul) UInt32(key string) (uint32, error) {
 func (c *consul) UInt64(key string) (uint64, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return 0, go_config.NoVariablesInitialised
+		return 0, errors.New("no variables initialized")
 	}
 	return cast.ToUint64E(val)
 }
@@ -145,7 +146,7 @@ func (c *consul) UInt64(key string) (uint64, error) {
 func (c *consul) Slice(key string) ([]interface{}, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return []interface{}{}, go_config.NoVariablesInitialised
+		return []interface{}{}, errors.New("no variables initialized")
 	}
 	return cast.ToSliceE(val)
 }
@@ -153,7 +154,7 @@ func (c *consul) Slice(key string) ([]interface{}, error) {
 func (c *consul) SliceInt(key string) ([]int, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return []int{}, go_config.NoVariablesInitialised
+		return []int{}, errors.New("no variables initialized")
 	}
 	return cast.ToIntSliceE(val)
 }
@@ -161,7 +162,7 @@ func (c *consul) SliceInt(key string) ([]int, error) {
 func (c *consul) SliceString(key string) ([]string, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return []string{}, go_config.NoVariablesInitialised
+		return []string{}, errors.New("no variables initialized")
 	}
 	return cast.ToStringSliceE(val)
 }
@@ -169,7 +170,7 @@ func (c *consul) SliceString(key string) ([]string, error) {
 func (c *consul) String(key string) (string, error) {
 	val := utils.Lookup(c.data, c.key(key))
 	if val == nil {
-		return "", go_config.NoVariablesInitialised
+		return "", errors.New("no variables initialized")
 	}
 	return cast.ToStringE(val)
 }

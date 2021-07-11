@@ -3,7 +3,7 @@ package file_test
 import (
 	"github.com/cheebo/go-config"
 	"github.com/cheebo/go-config/internal/reader"
-	"github.com/cheebo/go-config/sources/file"
+	"github.com/cheebo/go-config/pkg/sources/file"
 	"github.com/stretchr/testify/assert"
 
 	"testing"
